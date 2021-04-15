@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>防災備品管理</title>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/app-style.css}" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/style.css}" rel="stylesheet" type="text/css" />
+</head>
+<style>
+.is-invalid {
+	color: red;
+}
+</style>
+<body class="logobg_style">
+
+	<div id="large-header" class="large-header login-page">
+		<canvas id="demo-canvas" width="1590" height="711"></canvas>
+		<div class="login-form">
+			<div class="login-content">
+				<h1 class="title_name">防災管理システム</h1>
+				<h1 class="title_name">ログイン</h1>
+				<form method="post" role="form" id="form" class="login_padding"
+					th:action="@{/login}" th:object="${us000V01Form}">
+					<div class="alert alert-danger">
+						<strong></strong>
+						<span th:each="msg:${#fields.globalErrors()}" th:text="${msg}"></span>
+					</div>
+					<div class="form-group clearfix">
+
+						<div class="input-group">
+							<input type="text" class="form-control" name="username"
+								id="username" placeholder="ログインID" autocomplete="off"
+								th:errorclass="is-invalid" th:value="*{username}" />
+
+						</div>
+						<div class="help-bolck" style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('username')}" th:errors="*{username}"></div>
+					</div>
+
+					<div class="form-group clearfix">
+
+						<div class="input-group">
+							<input type="password" class="form-control" name="password"
+								id="password" placeholder="パスワード" th:errorclass="is-invalid"
+								th:value="*{password}" />
+						</div>
+						<div class="help-bolck" style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('password')}" th:errors="*{password}"></div>
+					</div>
+					<div class="form-group py-2">
+						<div class="checkbox">
+							<input type="checkbox" id="rememberMe" name="rememberMe"
+								checked="checked" /> <label for="rememberMe"
+								style="color: white;">次回もこのログインを使用する</label>
+						</div>
+					</div>
+					<div class="tishi"></div>
+					<div class="form-group">
+						<button class="btn btn-success btn-login fa fa-sign-in">ログイン</button>
+					</div>
+					<div class=" textright">
+						<a th:href="@{/initUS}" class="forget">新規登録</a>
+					</div>
+					<div class="form-group"></div>
+
+				</form>
+			</div>
+
+		</div>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+</html>

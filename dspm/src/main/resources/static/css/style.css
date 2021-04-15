@@ -1,0 +1,311 @@
+
+.form-control {
+	display: inline;
+	width: 95%;
+	height: 34px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow
+		ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out
+		.15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.searchStyleSet .form-control{
+	display: inline;
+	width: 95%;
+	height: 25px;
+	padding: 1px 2px;
+	font-size: 13px;
+	min-width:130px;
+}
+.searchStyleSet .col-form-label{
+	font-size:14px;
+	padding-top:1px;
+	padding-bottom:1px;
+	margin-top:0px;
+	margin-bottom:0px;
+}
+.searchStyleSet .row{
+	margin-bottom:5px;
+}
+
+.row .form-control.is-invalid,.form-group .form-control.is-invalid{
+	background-image: none;
+}
+
+.help-bolck {
+	padding-left: 15px;
+	font-size:12px;
+}
+
+.col-select {
+	width: 167px;
+	height: 27px;
+}
+
+.table-select {
+	height: 400px;
+	overflow-y: auto;
+}
+
+.weatherMain .day , .weatherMain .tomorrow , .weatherMain .dayAfterTomorrow{
+	margin-bottom:5px;
+}
+
+a.btn-primary.disabled{
+	border-color:#C0C0C0;
+	background-color:#C0C0C0;
+}
+
+/* login */
+.textright{text-align: right}
+.large-header {
+    position: relative;
+    width: 100%;
+    background:url(../images/login/bg.jpg) no-repeat;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center center;
+    z-index: 1;
+}
+
+.login-content .help-bolck{
+	padding:0;
+	position:absolute;
+	top:45px;
+}
+.logobg_style .login-form .login-content{
+	padding-top:0;
+}
+.logobg_style .login-form {
+    position:absolute;
+    top: 50%;
+	font-family: "微软雅黑", Microsoft YaHei UI;
+	margin-top: -225px;
+	margin-left: -225px;
+	left: 50%;
+	z-index: 999;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+.logobg_style .login-content {
+    position: relative;
+    width: 450px;
+	z-index: 999;
+	height: 470px;
+	box-shadow: 0px 3px 6px #333333;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 10px 10px;
+    -webkit-transition: all 550ms ease-in-out;
+    -moz-transition: all 550ms ease-in-out;
+    -o-transition: all 550ms ease-in-out;
+    transition: all 550ms ease-in-out;
+}
+.logobg_style .input-group-addon{ padding:6px 20px }
+.logobg_style .login-content .title_name{ color: #ffffff; font-weight: bold;font-size:43px;}
+.login-content .login_padding{padding: 0px 40px; position: relative}
+.login-content .form-control{ height: 45px; background-color:#fff;}
+.login-content .input-group {
+     height:45px;
+	float: left;
+    -webkit-transition: all 300ms ease-in-out;
+    -moz-transition: all 300ms ease-in-out;
+    -o-transition: all 300ms ease-in-out;
+    transition: all 300ms ease-in-out;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.logobg_style a:hover{color: #ffffff}
+.login-form .form-group{ margin-bottom: 25px; display: block; position: relative;}
+.logobg_style .input-group-addon i{background-size: 25px; position: absolute; left: 3px; top:7px; width: 30px; height: 30px;}
+.btn-block{height: 45px; line-height:29px; font-size: 18px}
+.forget{color: #ffffff; text-align: right}
+.tishi,.tishis{ margin: 10px 0px; }
+.tishi .prompt,
+.tishis .prompt{ background:#ffffff; border: 1px solid #F94D50; color: #F94D50; text-align: left;  padding-left: 40px; height: 30px; line-height:28px; border-radius: 3px;position: relative}
+.login input {font-family: 'Microsoft YaHei';outline: none;}
+.btn_mfyzm {
+    width: 100px;
+    margin-left: 10px;
+    height: 45px;
+    background: #f0f0f0;
+    border: 1px solid #d6d6d6;
+    border-radius: 3px;
+    cursor: pointer;
+	transition: background-color .5s ease;
+}
+.btn_mfyzm.msgs1,
+.btn_mfyzm.msgs1:hover{ background: #E6E6E6;color: #818080; border: 1px solid #CCCCCC;}
+.btn_mfyzm:hover{color: #ffffff; background:#DD4144; border: 1px solid #DD4144}
+.download-btn{
+
+	height:38px;
+	line-height: 26px;
+	color:#ffffff!important;
+	margin: 10px 0px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 220px;
+	text-align: left;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+	white-space:inherit;
+	font-size: 12px;
+}
+.download-btn i{ margin-right:10px;}
+
+.Retrieve_style{
+	font-family: "微软雅黑", Microsoft YaHei UI;
+	width: 460px;
+	height: 750px;
+	border: 10px solid  rgba(255,255,255,0.42);
+	left: 50%;
+	top:250px;
+	margin-left: -225px;
+	margin-top: -225px;
+	position: absolute;
+	z-index: 999;
+}
+.Retrieve_style h1{
+
+	margin: 0px;
+	 margin-top: 20px;
+	/*margin-bottom: 20px;*/
+	left: 50%;
+	color:#d9534f;
+	border-radius: 20px;
+	text-align: center; ;
+	background: rgba(255,255,255,1.00)
+}
+.Retrieve_style .Retrieve-content{ 
+	width: 440px;
+	background: #ffffff;  
+	height: 730px; 
+	position: absolute; 
+	top:0px;
+}
+.Retrieve_style .form-group{
+	margin-bottom: 25px;
+	display: block; 
+	position: relative;
+	text-align: center;
+}
+.Retrieve_style .login_padding{
+	padding: 15px 50px; position: relative
+}
+.Retrieve_style .form-group .help-bolck{
+	padding:0;
+	position:absolute;
+	top:38px;
+	text-align: left;
+}
+#div_imgfile{
+} 
+#div_imgfile:hover {
+	
+} 
+.payment-tab2 .imgfile {  
+	display: none;  
+}  
+#div_imglook {  
+	margin-top: 20px;
+}
+.lookimg {
+	box-sizing: border-box; 
+	float: left;
+	margin-top:5px;
+	position: relative;  
+}
+.lookimg a{
+	cursor: zoom-in;
+	box-sizing: border-box; 
+	float: left;
+	margin-top:5px;
+	position: relative;  
+}
+#img_text img , .lookimg img {  
+	float:left;
+	margin:0 5px;
+}
+.lookimg_delBtn {  
+	position: absolute;  
+	bottom: 0px;  
+	left: 0px;  
+	width: 100%;  
+	height: 30px;  
+	text-align: center;  
+	line-height: 30px;  
+	background-color: #808080;  
+	opacity: 0.8;  
+	color: white;  
+	font-size: 16px;  
+	font-family: 微软雅黑;  
+	display: none;  
+	cursor: pointer;  
+} 
+.lookimgUp_delBtn:hover {  
+	opacity: 1;  
+}
+.lookimg_delBtn {  
+	position: absolute;  
+	bottom: 0px;  
+	left: 0px;  
+	width: 100%;  
+	height: 30px;  
+	text-align: center;  
+	line-height: 30px;  
+	background-color: #808080;  
+	opacity: 0.8;  
+	color: white;  
+	font-size: 16px;  
+	font-family: 微软雅黑;  
+	display: none;  
+	cursor: pointer;  
+} 
+.lookimgUp_delBtn:hover {  
+	opacity: 1;  
+}     
+.lookimg_progress {  
+	position: absolute;  
+	bottom: 15px;  
+	left: 0px;  
+	width: 100%;  
+	height: 20px;  
+	background-color: #e0e0e0;  
+	box-sizing: border-box;  
+	border: 1px solid black;  
+	display: none;  
+	text-align: center;  
+	line-height: 20px;  
+	font-size: 14px;  
+}   
+.lookimg_progress div {  
+	position: absolute;  
+	left: 0px;  
+	top: 0px;  
+	height: 100%;  
+	width: 0px;  
+	background-color: #e9cc2e;  
+}

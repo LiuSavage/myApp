@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbs.dao.PS000V01Mapper">
+
+	<select id="select" resultType="com.cbs.entity.StoringEntity">
+		select
+		  storege_code storegeCode
+		  , category_code categoryCode
+		  , goods_code goodsCode
+		  , user_code userCode
+		  , st_scheduled stScheduled
+		  , st_receipt stReceipt
+		  , st_expiration stExpiration
+		  , serial_number serialNumber
+		  , st_price stPrice
+		  , st_quantity stQuantity
+		  , st_unit stUnit
+		  , st_amount stAmount
+		  , st_reason stReason
+		  , st_status stStatus
+		  , st_comment stComment
+		  , photo photo
+		FROM
+		  tbl_storing
+		WHERE
+		  id = #{id}
+	</select>
+
+	<insert id="insertStoring" parameterType="com.cbs.entity.StoringEntity">
+		INSERT
+		INTO tbl_storing(
+		  storege_code
+		  , category_code
+		  , goods_code
+		  , user_code
+		  , st_scheduled
+		  , st_receipt
+		  , st_expiration
+		  , serial_number
+		  , st_price
+		  , st_quantity
+		  , st_unit
+		  , st_amount
+		  , st_reason
+		  , st_status
+		  , st_comment
+		  , photo
+		  , del_flg
+		  , insert_date
+		  , insert_user
+		  , update_date
+		  , update_user
+		)
+		VALUES (
+		  #{storegeCode}
+		  , #{categoryCode}
+		  , #{goodsCode}
+		  , #{userCode}
+		  , #{stScheduled}
+		  , #{stReceipt}
+		  , #{stExpiration}
+		  , #{serialNumber}
+		  , #{stPrice}
+		  , #{stQuantity}
+		  , #{stUnit}
+		  , #{stAmount}
+		  , #{stReason}
+		  , #{stStatus}
+		  , #{stComment}
+		  , #{photo}
+		  , #{delFlg}
+		  , #{insertDate}
+		  , #{insertUser}
+		  , #{updateDate}
+		  , #{updateUser}
+		)
+	</insert>
+
+	<update id="deleteStoring">
+		update tbl_storing
+		set del_flg=1
+		where id=#{id}
+	</update>
+
+	<select id="selectStock" resultType="com.cbs.entity.StockEntity">
+		select
+		  id
+		  , storege_code storegeCode
+		  , category_code categoryCode
+		  , goods_code goodsCode
+		  , stock_number stockNumber
+		  , st_unit stUnit
+		  , st_expiration stExpiration
+		  , serial_number serialNumber
+		  , st_price stPrice
+		  , st_amount stAmount
+		  , stock_status stockStatus
+		  , st_comment stComment
+		  , photo
+		FROM
+		  tbl_stock
+		WHERE
+		  storege_code = #{storegeCode}
+		  and category_code = #{categoryCode}
+		  and goods_code = #{goodsCode}
+		  and st_price = #{stPrice}
+		  and st_expiration = #{stExpiration}
+		  and st_unit = #{stUnit}
+		  and del_flg = 0
+	</select>
+
+	<update id="deleteStock">
+		update tbl_stock
+		set del_flg=1
+		where id=#{id}
+	</update>
+
+	<insert id="insertStock" parameterType="com.cbs.entity.StockEntity">
+		INSERT
+		INTO tbl_stock(
+		  storege_code
+		  , category_code
+		  , goods_code
+		  , stock_number
+		  , st_unit
+		  , st_expiration
+		  , serial_number
+		  , st_price
+		  , st_amount
+		  , stock_status
+		  , st_comment
+		  , photo
+		  , del_flg
+		  , insert_date
+		  , insert_user
+		  , update_date
+		  , update_user
+		)
+		VALUES (
+		  #{storegeCode}
+		  , #{categoryCode}
+		  , #{goodsCode}
+		  , #{stockNumber}
+		  , #{stUnit}
+		  , #{stExpiration}
+		  , #{serialNumber}
+		  , #{stPrice}
+		  , #{stAmount}
+		  , #{stockStatus}
+		  , #{stComment}
+		  , #{photo}
+		  , #{delFlg}
+		  , #{insertDate}
+		  , #{insertUser}
+		  , #{updateDate}
+		  , #{updateUser}
+		)
+	</insert>
+	
+	<select id="selectStockPhoto" parameterType="java.lang.String"  resultType="String">
+		select
+		  t2.photo
+		FROM
+		  tbl_stocking t1,
+			tbl_stock t2
+		WHERE
+		  t1.del_flg = 0
+			and t2.del_flg = 0
+			and t1.storing_id = 381
+			and t1.storege_code = t2.storege_code
+		  and t1.category_code = t2.category_code
+		  and t1.st_price = t2.st_price
+		  and t1.st_expiration = t2.st_expiration
+		  and t1.stocking_unit = t2.st_unit
+	</select>
+
+</mapper>

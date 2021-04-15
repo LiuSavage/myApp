@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbs.dao.SL000V01Mapper">
+
+	<select id="search" resultType="com.cbs.form.SL000V01DetailInfo">
+		select
+		  storage.storege_name storegeName
+		  , stockpile.category_name categoryName
+		  , stockpile.goods_name goodsName
+		  , userinfo.userName userName
+		  , stock.st_expiration stExpiration
+		  , stock.stock_number stockNumber
+		  , code.code_name stockUnitName
+		  , case
+		    when 0 >= datediff(stock.st_expiration, now())
+		      then 0
+		    else datediff(stock.st_expiration, now())
+		    end discardDays
+		from
+		  tbl_stock stock
+		  left join tbl_storage_master storage
+		    on stock.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on stock.category_code = stockpile.category_code
+		    and stock.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_user_master userinfo
+		    on stock.insert_user = userinfo.userID
+		    and userinfo.del_flg = 0
+		  left join tbl_code_master code
+		    on stock.st_unit = code.code_id
+		    and code.id = 7
+		    and code.del_flg = 0
+		where
+		stock.del_flg = 0 and stock.stock_number > 0
+		<if test="storegeCode != null and storegeCode != ''">
+			and stock.storege_code = #{storegeCode}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and stock.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and stock.goods_code = #{goodsCode}
+		</if>
+		<if test="expirationFrom != null">
+			and stock.st_expiration >= #{expirationFrom}
+		</if>
+		<if test="expirationEnd != null">
+			and #{expirationEnd} >= stock.st_expiration
+		</if>
+		order by stock.st_expiration desc
+		limit #{offset},#{size};
+	</select>
+
+	<select id="selectAll" resultType="com.cbs.form.SL000V01DetailInfo">
+		select
+		  storage.storege_name storegeName
+		  , stockpile.category_name categoryName
+		  , stockpile.goods_name goodsName
+		  , userinfo.userName userName
+		  , stock.st_expiration stExpiration
+		  , stock.stock_number stockNumber
+		  , code.code_name stockUnitName
+		  , case
+		    when 0 >= datediff(stock.st_expiration, now())
+		      then 0
+		    else datediff(stock.st_expiration, now())
+		    end discardDays
+		from
+		  tbl_stock stock
+		  left join tbl_storage_master storage
+		    on stock.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on stock.category_code = stockpile.category_code
+		    and stock.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_user_master userinfo
+		    on stock.insert_user = userinfo.userID
+		    and userinfo.del_flg = 0
+		  left join tbl_code_master code
+		    on stock.st_unit = code.code_id
+		    and code.id = 7
+		    and code.del_flg = 0
+		where
+		stock.del_flg = 0 and stock.stock_number > 0
+		<if test="storegeCode != null and storegeCode != ''">
+			and stock.storege_code = #{storegeCode}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and stock.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and stock.goods_code = #{goodsCode}
+		</if>
+		<if test="expirationFrom != null">
+			and stock.st_expiration >= #{expirationFrom}
+		</if>
+		<if test="expirationEnd != null">
+			and #{expirationEnd} >= stock.st_expiration
+		</if>
+		order by stock.st_expiration desc
+	</select>
+
+</mapper>

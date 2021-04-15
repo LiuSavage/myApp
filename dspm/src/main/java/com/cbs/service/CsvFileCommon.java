@@ -1,0 +1,173 @@
+package com.cbs.service;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.format.Alignment;
+import jxl.format.Border;
+import jxl.format.BorderLineStyle;
+import jxl.format.Colour;
+import jxl.format.UnderlineStyle;
+import jxl.format.VerticalAlignment;
+import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
+/*
+ * csvファイル共通サービス
+ */
+@Service
+@Transactional
+public class CsvFileCommon {
+
+	private static final String DATE_FORMAT = "yyyyMMddHHmmss";
+
+	/**
+	 * csvファイルをダウンロードする。
+	 * @param screenName  画面名称
+	 * @param titleList  タイトル名称
+	 * @param sheetDataList  ダウンロード情報
+	 */
+	@SuppressWarnings("rawtypes")
+	public void downLoadCSVFile(String screenName, List<String> titleList, List sheetDataList) {
+
+		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
+				.getRequestAttributes();
+		HttpServletResponse response = requestAttributes.getResponse();
+
+		// ファイル名
+		String downDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_FORMAT));
+		String filename = screenName + "_" + downDate + ".xls";
+		String path = "C:\\down" + "/" + filename;
+
+		try {
+
+			File name = new File(path);
+			WritableWorkbook workbook = Workbook.createWorkbook(name);
+			WritableSheet sheet = workbook.createSheet(screenName, 0);
+			WritableFont font = new WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD, false,
+					UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
+
+			WritableCellFormat cellFormat = new WritableCellFormat(font);
+			cellFormat.setBackground(Colour.WHITE);
+			cellFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
+			cellFormat.setAlignment(Alignment.CENTRE);
+			cellFormat.setVerticalAlignment(VerticalAlignment.CENTRE);
+			sheet.getSettings().setDefaultColumnWidth(20);
+			cellFormat.setWrap(true);
+
+			if (titleList != null && titleList.size() > 0) {
+				for (int index = 0; index < titleList.size(); index++) {
+					Label label = new Label(index, 0, titleList.get(index), cellFormat);
+					sheet.addCell(label);
+				}
+			}
+			WritableFont font2 = new WritableFont(WritableFont.ARIAL, 14, WritableFont.NO_BOLD, false,
+					UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
+			WritableCellFormat cellFormat2 = new WritableCellFormat(font2);
+			cellFormat2.setAlignment(Alignment.CENTRE);
+			cellFormat2.setVerticalAlignment(VerticalAlignment.CENTRE);
+			cellFormat2.setBackground(Colour.WHITE);
+			cellFormat2.setBorder(Border.ALL, BorderLineStyle.THIN);
+			cellFormat2.setWrap(true);
+
+			int row = 1;
+			if (sheetDataList != null && sheetDataList.size() > 0) {
+				for (Object object : sheetDataList) {
+					Field[] fields = object.getClass().getDeclaredFields();
+					int index = 0;
+					for (Field field : fields) {
+						if (index >= titleList.size()) {
+							break;
+						}
+
+						field.setAccessible(true);
+						if (index == 0) {
+							Label lt0 = new Label(index, row, row + "", cellFormat2);
+							sheet.addCell(lt0);
+						} else {
+							Label lt0 = new Label(index, row, field.get(object) + "", cellFormat2);
+							sheet.addCell(lt0);
+						}
+						index++;
+					}
+					row++;
+				}
+			}
+			workbook.write();
+			workbook.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		OutputStream out = null;
+		try {
+			response.addHeader("content-disposition", "attachment;filename="
+					+ java.net.URLEncoder.encode(filename, "utf-8"));
+			out = response.getOutputStream();
+			InputStream is = new FileInputStream(path);
+			byte[] b = new byte[4096];
+			int size = is.read(b);
+			while (size > 0) {
+				out.write(b, 0, size);
+				size = is.read(b);
+			}
+			out.close();
+			is.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * ｃｓｖファイルデータを取得すること。
+	 * @param inputStream アップロードファイル
+	 */
+	public List<List<String>> readCSVFile(InputStream inputStream) {
+		List<List<String>> resultList = new ArrayList<>();
+
+		if (inputStream == null) {
+			return resultList;
+		}
+
+		try {
+			jxl.Workbook rwb = Workbook.getWorkbook(inputStream);
+			Sheet[] sheet = rwb.getSheets();
+			for (int i = 0; i < sheet.length; i++) {
+				Sheet rs = rwb.getSheet(i);
+				for (int j = 0; j < rs.getRows(); j++) {
+					Cell[] cells = rs.getRow(j);
+					List<String> list = new ArrayList<>();
+					for (int k = 0; k < cells.length; k++) {
+						list.add(cells[k].getContents());
+					}
+					resultList.add(list);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return resultList;
+	}
+
+}

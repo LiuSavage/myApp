@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbs.dao.IS000V01Mapper">
+
+	<select id="selectGroupby" resultType="com.cbs.form.IS000V01DetailInfo">
+		select
+		  stock.id
+		  , storage.storege_name storegeName
+		  , stockpile.category_name categoryName
+		  , stockpile.goods_name goodsName
+		  , stock.stock_number stockNumber
+		  , code.code_name stockUnitName
+		  , code1.code_name stockStatusSnap
+		  , stock.st_price stPrice
+		  , stock.st_expiration stExpiration
+		  , if (
+		    YEAR (CURDATE()) = YEAR (invertory.end_invertory)
+		    , CONCAT(
+		      YEAR (CURDATE())
+		      , '年 '
+		      , invertory.cnt
+		      , '回目\\n'
+		      , '実施済'
+		    )
+		    , CONCAT(YEAR (CURDATE()), '年未実施')
+		  ) status
+		  , stock.storege_code storegeCode
+		  , stock.category_code categoryCode
+		  , stock.goods_code goodsCode
+		  , stock.st_unit stUnit
+		  , stock.photo
+		from
+		  tbl_stock stock
+		  left join tbl_storage_master storage
+		    on stock.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on stock.category_code = stockpile.category_code
+		    and stock.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_code_master code
+		    on stock.st_unit = code.code_id
+		    and code.id = 7
+		    and code.del_flg = 0
+		  left join tbl_code_master code1
+		    on stock.stock_status = code1.code_id
+		    and code1.id = 10
+		    and code1.del_flg = 0
+		  left join (
+		    select
+		      max(end_invertory) end_invertory
+		      , count(end_invertory) cnt
+		      , storege_code
+		      , category_code
+		      , goods_code
+		      , st_unit
+		      , st_expiration
+		      , st_price
+		    from
+		      tbl_invertory
+		    where
+		      YEAR (end_invertory) = YEAR (CURDATE())
+		      and status = '1013'
+		      and del_flg = 0
+		    group by
+		      storege_code
+		      , category_code
+		      , goods_code
+		      , st_unit
+		      , st_expiration
+		      , st_price
+		    order by
+		      end_invertory desc
+		  ) invertory
+		    on stock.storege_code = invertory.storege_code
+		    and stock.category_code = invertory.category_code
+		    and stock.goods_code = invertory.goods_code
+		    and stock.st_unit = invertory.st_unit
+		    and stock.st_expiration = invertory.st_expiration
+		    and stock.st_price = invertory.st_price
+		where
+		  stock.del_flg = 0 and stock.stock_number> 0
+		  <if test="storegeCode != null and storegeCode != ''">
+			and stock.storege_code = #{storegeCode}
+		  </if>
+		  <if test="stockStatus != null and stockStatus != ''">
+			and stock.stock_status = #{stockStatus}
+		  </if>
+		  <if test="categoryCode != null and categoryCode != ''">
+			and stock.category_code = #{categoryCode}
+		  </if>
+		  <if test="goodsCode != null and goodsCode != ''">
+			and stock.goods_code = #{goodsCode}
+		  </if>
+		  <if test="expirationFrom != null">
+			and stock.st_expiration >= #{expirationFrom}
+		  </if>
+		  <if test="expirationEnd != null">
+			and #{expirationEnd} >= stock.st_expiration
+		  </if>
+		order by
+		  stock.storege_code, stock.category_code, stock.goods_code
+		limit #{offset},#{size};
+	</select>
+
+	<select id="selectAll" resultType="com.cbs.form.IS000V01DetailInfo">
+		select
+		  stock.id
+		  , storage.storege_name storegeName
+		  , stockpile.category_name categoryName
+		  , stockpile.goods_name goodsName
+		  , stock.stock_number stockNumber
+		  , code.code_name stockUnitName
+		  , code1.code_name stockStatusSnap
+		  , stock.st_price stPrice
+		  , stock.st_expiration stExpiration
+		  , if (
+		    YEAR (CURDATE()) = YEAR (invertory.end_invertory)
+		    , CONCAT(
+		      YEAR (CURDATE())
+		      , '年 '
+		      , invertory.cnt
+		      , '回目\\n'
+		      , '実施済'
+		    )
+		    , CONCAT(YEAR (CURDATE()), '年未実施')
+		  ) status
+		  , stock.storege_code storegeCode
+		  , stock.category_code categoryCode
+		  , stock.goods_code goodsCode
+		  , stock.st_unit stUnit
+		  , stock.photo
+		from
+		  tbl_stock stock
+		  left join tbl_storage_master storage
+		    on stock.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on stock.category_code = stockpile.category_code
+		    and stock.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_code_master code
+		    on stock.st_unit = code.code_id
+		    and code.id = 7
+		    and code.del_flg = 0
+		  left join tbl_code_master code1
+		    on stock.stock_status = code1.code_id
+		    and code1.id = 10
+		    and code1.del_flg = 0
+		  left join (
+		    select
+		      max(end_invertory) end_invertory
+		      , count(end_invertory) cnt
+		      , storege_code
+		      , category_code
+		      , goods_code
+		      , st_unit
+		      , st_expiration
+		      , st_price
+		    from
+		      tbl_invertory
+		    where
+		      YEAR (end_invertory) = YEAR (CURDATE())
+		      and status = '1013'
+		      and del_flg = 0
+		    group by
+		      storege_code
+		      , category_code
+		      , goods_code
+		      , st_unit
+		      , st_expiration
+		      , st_price
+		    order by
+		      end_invertory desc
+		  ) invertory
+		    on stock.storege_code = invertory.storege_code
+		    and stock.category_code = invertory.category_code
+		    and stock.goods_code = invertory.goods_code
+		    and stock.st_unit = invertory.st_unit
+		    and stock.st_expiration = invertory.st_expiration
+		    and stock.st_price = invertory.st_price
+		where
+		  stock.del_flg = 0 and stock.stock_number> 0
+		  <if test="storegeCode != null and storegeCode != ''">
+			and stock.storege_code = #{storegeCode}
+		  </if>
+		  <if test="stockStatus != null and stockStatus != ''">
+			and stock.stock_status = #{stockStatus}
+		  </if>
+		  <if test="categoryCode != null and categoryCode != ''">
+			and stock.category_code = #{categoryCode}
+		  </if>
+		  <if test="goodsCode != null and goodsCode != ''">
+			and stock.goods_code = #{goodsCode}
+		  </if>
+		  <if test="expirationFrom != null">
+			and stock.st_expiration >= #{expirationFrom}
+		  </if>
+		  <if test="expirationEnd != null">
+			and #{expirationEnd} >= stock.st_expiration
+		  </if>
+		order by
+		  stock.storege_code, stock.category_code, stock.goods_code
+	</select>
+</mapper>

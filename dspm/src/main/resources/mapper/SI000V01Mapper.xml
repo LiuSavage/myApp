@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cbs.dao.SI000V01Mapper">
+
+	<insert id="insert" parameterType="com.cbs.entity.InvertoryEntity" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT
+		INTO tbl_invertory(
+		storege_code
+		, category_code
+		, goods_code
+		, user_code
+		, st_unit
+		, st_expiration
+		, st_price
+		, star_invertory
+		, end_invertory
+		, invert_number
+		, status
+		, comment
+		, del_flg
+		, insert_date
+		, insert_user
+		, update_date
+		, update_user
+		)
+		VALUES (
+		 #{storegeCode}
+		, #{categoryCode}
+		, #{goodsCode}
+		, #{userCode}
+		, #{stUnit}
+		, #{stExpiration}
+		, #{stPrice}
+		, #{starInvertory}
+		, #{endInvertory}
+		, #{invertNumber}
+		, #{status}
+		, #{comment}
+		, #{delFlg}
+		, #{insertDate}
+		, #{insertUser}
+		, #{updateDate}
+		, #{updateUser}
+		)
+	</insert>
+
+	<select id="select" resultType="com.cbs.entity.InvertoryEntity">
+		select
+		storege_code storegeCode
+		, category_code categoryCode
+		, goods_code goodsCode
+		, st_unit stUnit
+		, st_expiration stExpiration
+		, st_price stPrice
+		, user_code userCode
+		, star_invertory starInvertory
+		, end_invertory endInvertory
+		, invert_number invertNumber
+		, status
+		, comment
+		from tbl_invertory
+		where id=#{id}
+		and del_flg = 0
+	</select>
+
+	<update id="delete">
+		update tbl_invertory
+		set del_flg=1
+		where id=#{id}
+	</update>
+
+
+</mapper>

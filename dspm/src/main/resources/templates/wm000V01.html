@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>防災備品管理</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{js/bootstrap-datepicker/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{/css/icons.css}" />
+<link rel="stylesheet" th:href="@{/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{/css/app-style.css}" />
+<link rel="stylesheet" th:href="@{/css/sidebar-menu.css}" />
+<link rel="stylesheet" th:href="@{/js/gallery/lightgallery.min.css}" />
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{js/header.js}"></script>
+</head>
+<style>
+.is-invalid {
+	color: red;
+}
+</style>
+<body>
+	<div id="wrapper">
+		<div th:include="common/wrapper :: wrapper"></div>
+		<div th:include="common/header :: header"></div>
+		<div class="clearfix"></div>
+		<div class="content-wrapper">
+			<div class="container-fluid">
+				<div class="row pt-2 pb-2">
+					<div class="col-sm-9">
+						<h4 class="page-title">倉庫間移動入力</h4>
+					</div>
+					<div class="col-sm-3">
+						<div class="btn-group float-sm-right">
+							<div class="dropdown-menu"></div>
+						</div>
+					</div>
+				</div>
+
+				<form method="post" role="myForm" id="myForm" class="login_padding"
+					th:action="@{/regterWM}" th:object="${wm000V01Form}">
+					<input type="hidden" id="stockingId" name="stockingId"
+						th:value="*{stockingId}" /> <input type="hidden" id="storingId"
+						name="storingId" th:value="*{storingId}" /> <input
+						th:if="${wm000V01Form.kbn}=='2'" type="hidden" id="kbn" name="kbn"
+						th:value="${wm000V01Form.kbn}" /> <input
+						th:if="${wm000V01Form.kbn}=='2'" type="hidden" id="storegeCode"
+						name="storegeCode" th:value="${wm000V01Form.storegeCode}" /> <input
+						th:if="${wm000V01Form.kbn}=='2'" type="hidden" id="storegeCode2"
+						name="storegeCode2" th:value="${wm000V01Form.storegeCode2}" /> <input
+						th:if="${wm000V01Form.kbn}=='2'" type="hidden" id="categoryCode"
+						name="categoryCode" th:value="${wm000V01Form.categoryCode}" /> <input
+						th:if="${wm000V01Form.kbn}=='2'" type="hidden" id="goodsCode"
+						name="goodsCode" th:value="${wm000V01Form.goodsCode}" />
+					<div th:include="common/message :: message"></div>
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">移動元倉庫名</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="storegeCode" name="storegeCode"
+												th:errorclass="is-invalid"
+												th:disabled="${wm000V01Form.kbn} == '1' or ${wm000V01Form.kbn} == '2'">
+												<option th:each="storege : ${wm000V01Form.storegeList}"
+													th:object="${storege}" th:text="${storege.value}"
+													th:value="${storege.key}"
+													th:selected="${storege.key == wm000V01Form.storegeCode}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('storegeCode')}"
+												th:errors="*{storegeCode}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">移動先倉庫名</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="storegeCode2" name="storegeCode2"
+												th:errorclass="is-invalid"
+												th:disabled="${wm000V01Form.kbn} == '1' or ${wm000V01Form.kbn} == '2'">
+												<option th:each="storege : ${wm000V01Form.storegeList}"
+													th:object="${storege}" th:text="${storege.value}"
+													th:value="${storege.key}"
+													th:selected="${storege.key == wm000V01Form.storegeCode2}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('storegeCode2')}"
+												th:errors="*{storegeCode2}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">カテゴリー</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="categoryCode" name="categoryCode"
+												th:errorclass="is-invalid" onchange="getGoods()"
+												th:disabled="${wm000V01Form.kbn} == '1' or ${wm000V01Form.kbn} == '2'">
+												<option th:each="category : ${wm000V01Form.categoryList}"
+													th:object="${category}" th:text="${category.value}"
+													th:value="${category.key}"
+													th:selected="${category.key == wm000V01Form.categoryCode}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('categoryCode')}"
+												th:errors="*{categoryCode}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">備品名</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="goodsCode" name="goodsCode" th:errorclass="is-invalid"
+												th:disabled="${wm000V01Form.kbn} == '1' or ${wm000V01Form.kbn} == '2'">
+												<option th:each="goods : ${wm000V01Form.goodsList}"
+													th:object="${goods}" th:text="${goods.value}"
+													th:value="${goods.key}"
+													th:selected="${goods.key == wm000V01Form.goodsCode}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('goodsCode')}"
+												th:errors="*{goodsCode}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">移動担当者</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="sheUser" name="sheUser" th:errorclass="is-invalid"
+												th:disabled="${wm000V01Form.kbn} == '1'">
+												<option th:each="user : ${wm000V01Form.sheUserList}"
+													th:object="${user}" th:text="${user.value}"
+													th:value="${user.key}"
+													th:selected="${user.key == wm000V01Form.sheUser}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('sheUser')}"
+												th:errors="*{sheUser}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">移動日</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <input type="text"
+												id="movingDay" name="movingDay"
+												th:value="${wm000V01Form.movingDay}"
+												class="form-control checkDate"
+												th:errorclass="is-invalid"
+												th:disabled="${wm000V01Form.kbn} == '1'" />
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('movingDay')}"
+												th:errors="*{movingDay}"></div>
+										</div>
+									</div>
+									
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">移動数</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <input type="text"
+												id="movingNumber" name="movingNumber"
+												th:value="${wm000V01Form.movingNumber}"
+												class="form-control formatNumble" maxlength="9"
+												th:errorclass="is-invalid"
+												th:disabled="${wm000V01Form.kbn} == '1'" />
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('movingNumber')}"
+												th:errors="*{movingNumber}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">移動単位</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="stockingUnit" name="stockingUnit"
+												th:errorclass="is-invalid"
+												th:disabled="${wm000V01Form.kbn} == '1'">
+												<option th:each="code : ${wm000V01Form.codeList}"
+													th:object="${code}" th:text="${code.value}"
+													th:value="${code.key}"
+													th:selected="${code.key == wm000V01Form.stockingUnit}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stockingUnit')}"
+												th:errors="*{stockingUnit}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">ステータス</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="status" name="status" th:errorclass="is-invalid"
+												th:disabled="${wm000V01Form.kbn} == '1'">
+												<option th:each="status : ${wm000V01Form.statusList}"
+													th:object="${status}" th:text="${status.value}"
+													th:value="${status.key}"
+													th:selected="${status.key == wm000V01Form.status}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('status')}" th:errors="*{status}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">備考</label>
+										<div class="col-sm-9">
+											<em style="color: #fff;">*</em>
+											<textarea class="form-control" rows="4" id="comment"
+												maxlength="50" name="comment"
+												th:text="${wm000V01Form.comment}"
+												th:disabled="${wm000V01Form.kbn} == '1'"></textarea>
+											<span class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('comment')}"
+												th:errors="*{comment}"></span>
+										</div>
+									</div>
+
+									<div class="form-group row payment-tab2"
+										th:if="${wm000V01Form.photoList != null}">
+										<label for="basic-select" class="col-sm-2 col-form-label">写真</label>
+										<div class="col-sm-9" th:if="${wm000V01Form.kbn} == '1'">
+											<em style="color: #fff;">*</em>
+											<div id="div_imglook" class="center-block demo-gallery">
+												<div class="lookimg" id="lightgallery">
+													<a th:each=" photo : ${wm000V01Form.photoList}"
+														th:href="@{'/uploadPath/stock/' + ${photo}}"> <img
+														th:src="@{'/uploadPath/stock/' + ${photo}}"
+														onload="loadImg(this,130,130)" />
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-footer text-center">
+										<a th:href="@{/moveSearch}" class="btn btn-danger"
+											th:if="${wm000V01Form.kbn} == '1' and ${wm000V01Form.hkbn} =='3' and ${wm000V01Form.kbn} != '2'">
+											<i class="fa fa-times"></i> 戻る
+										</a> <a th:href="@{/moveUpdSearch}" class="btn btn-danger"
+											th:if="${wm000V01Form.kbn} == '1' and ${wm000V01Form.hkbn} !='3' or ${wm000V01Form.kbn} == '2'">
+											<i class="fa fa-times"></i> 戻る
+										</a> <a th:href="@{/moveSearch}" class="btn btn-danger"
+											th:if="${wm000V01Form.kbn} != '1' and ${wm000V01Form.kbn} != '2'">
+											<i class="fa fa-times"></i> 戻る
+										</a>
+										<button type="button" class="btn btn-success"
+											onclick="reg(this)"
+											th:if="${wm000V01Form.kbn} != '1' and ${wm000V01Form.kbn} != '2'">
+											<i class="fa fa-check-square-o"></i> 登録
+										</button>
+										<button type="button" onclick="update(this)"
+											class="btn btn-success" th:if="${wm000V01Form.kbn} == '2'">
+											<i class="fa fa-check-square-o"></i> 更新
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div th:include="common/footer :: footer"></div>
+	</div>
+
+	<script type="text/javascript" th:src="@{js/const.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/sidebar-menu.js}"></script>
+	<script type="text/javascript" th:src="@{js/app-script.js}"></script>
+	<script type="text/javascript" th:src="@{js/select2.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/gallery/lightgallery.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/gallery/lg-zoom.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/gallery/lg-fullscreen.min.js}"></script>
+
+	<script>
+		function getGoods() {
+			getGoodsList("/getGoodsWM", "myForm");
+		}
+		
+		$("#movingDay").datepicker({
+			autoclose : true,
+			format : 'yyyy-mm-dd'
+		});
+
+		function update(obj) {
+			$(obj).blur();
+			Ewin.confirm({
+				message : "更新してよろしいですか？"
+			}).on(function(e) {
+				if (!e) {
+					return;
+				}
+				$("#myForm").attr("action", "/updateWM");
+				$("#myForm").submit();
+			});
+		}
+
+		function reg(obj) {
+			$(obj).blur();
+			Ewin.confirm({
+				message : "登録してよろしいですか？"
+			}).on(function(e) {
+				if (!e) {
+					return;
+				}
+				$("#myForm").submit();
+			});
+		}
+
+		lightGallery(document.getElementById('lightgallery'));
+	</script>
+
+</body>
+</html>

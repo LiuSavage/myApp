@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<body>
+	<div id="header" th:fragment="header">
+		<header class="topbar-nav">
+			<nav class="navbar navbar-expand fixed-top">
+				<ul class="navbar-nav mr-auto align-items-center">
+					<li class="nav-item"><a class="nav-link toggle-menu"
+						href="javascript:void();"> <i class="icon-menu menu-icon"></i>
+					</a></li>
+					<li class="nav-item">
+						<div class="search-bar"> 
+								<span class="logo-text">防災備品管理</span>
+						</div>
+					</li>
+				</ul>
+				<ul class="navbar-nav align-items-center right-nav-link">
+					<li class="nav-item">
+						<div class="text-right" th:text="${session.loginName}+' 様'"></div>
+						<div class="text-right" id="dateTimeSet"></div>
+					</li>
+				</ul>
+			</nav>
+		</header>
+	</div>
+</body>
+</html>

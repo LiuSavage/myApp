@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cbs.dao.HP000V01Mapper">
+	
+	<select id="selectPeaple" resultType="com.cbs.form.HP000V01Info">
+		select areaID,
+			area_name areaName,
+			city_name cityName,
+			man,
+			woman,
+			aged,
+			foreigners,
+			disability
+		from tbl_area_master
+			where del_flg = 0
+			and areaID = (
+				select areaID
+					from tbl_user_master
+				where userID = #{userCode}
+					and del_flg = 0);
+	</select>
+	
+	<select id="selectGoodsSumList" resultType="com.cbs.form.HP000V01Info">
+		select sum(t1.stock_number) goodsSum,
+			t2.category_code categoryCode,
+			t2.category_name categoryName,
+			t2.goods_code goodsCode,
+			t2.goods_name goodsName,
+			t2.amount amount
+		from tbl_stock t1
+			left join tbl_stockpile_master t2
+			on t1.goods_code=t2.goods_code
+		where
+		t1.goods_code=#{goodsCode} and
+		t1.del_flg=0 and
+		t1.storege_code in(
+			select storege_code
+				from tbl_storage_master
+			where areaID=#{areaID}
+				and del_flg=0
+			);
+	</select>
+	
+	<select id="selectGoodsSumList-category" resultType="com.cbs.form.HP000V01Info">
+		select sum(t2.stock_number) goodsSum,
+			t1.category_code categoryCode,
+			t1.category_name categoryName,
+			t1.goods_code goodsCode,
+			t1.goods_name goodsName,
+			t1.amount amount
+		from tbl_stockpile_master t1
+			left join tbl_stock t2
+			on t1.goods_code=t2.goods_code
+			and t2.del_flg=0
+			and t2.storege_code in(
+				select storege_code
+					from tbl_storage_master
+				where areaID=#{areaID}
+					and del_flg=0
+				)
+		where
+		t1.goods_code=#{goodsCode} and
+		t1.del_flg=0;
+	</select>
+	
+	<select id="selectDataList" resultType="com.cbs.form.HP000V01Info">
+		select
+				id,
+				update_date updateDate,
+				update_user updateUser,
+				userName,
+				targetUrl
+		from
+		(select
+				st1.id,
+				st1.update_date,
+				st1.update_user,
+				us.userName,
+				1 targetUrl
+		from tbl_stocking st1
+			left join
+				tbl_user_master us
+			on us.userID = st1.update_user and
+			us.del_flg = 0
+		where 
+			st1.del_flg = 0 and st1.storing_id is null order by st1.update_date desc limit 50) t1
+		union all
+		select
+				id,
+				update_date updateDate,
+				update_user updateUser,
+				userName,
+				targetUrl
+		from
+		(select
+				st2.id,
+				st2.update_date,
+				st2.update_user,
+				us.userName,
+				2 targetUrl
+		from tbl_storing st2
+			left join
+				tbl_user_master us
+			on us.userID = st2.update_user and
+			us.del_flg = 0
+		where 
+			st2.del_flg = 0 and st2.id not in(
+				select storing_id from tbl_stocking	
+				where del_flg = 0 and storing_id is not null
+				)
+			order by st2.update_date desc limit 50) t2
+		union all
+		select
+				id,
+				update_date updateDate,
+				update_user updateUser,
+				userName,
+				targetUrl
+		from
+		(select
+				st3.id,
+				st3.update_date,
+				st3.update_user,
+				us.userName,
+				3 targetUrl
+		from tbl_stocking st3
+			left join
+				tbl_user_master us
+			on us.userID = st3.update_user and
+			us.del_flg = 0
+		where 
+			st3.del_flg = 0 and st3.storing_id is not null order by st3.update_date desc limit 50) t3
+		order by updateDate desc limit 50;
+			
+	</select>
+
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cbs.dao.OS000V02Mapper">
+
+	<select id="search" resultType="com.cbs.form.OS000V02DetailInfo">
+		SELECT
+		  stocking.id id
+		  , storage.storege_name storegeName
+		  , stockpile.category_name categoryName
+		  , stockpile.goods_name goodsName
+		  , userinfo.userName userName
+		  , stocking.stocking_receipt stockingReceipt
+		  , stocking.stocking_quantity stockingQuantity
+		  , code1.code_name stockingUnitName
+		  , code2.code_name stockingReasonName
+		  , code3.code_name stockingStatus
+		FROM
+		  tbl_stocking stocking
+		  left join tbl_storage_master storage
+		    on stocking.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on stocking.category_code = stockpile.category_code
+		    and stocking.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_user_master userinfo
+		    on stocking.user_code = userinfo.userID
+		    and userinfo.del_flg = 0
+		  left join tbl_code_master code1
+		    on stocking.stocking_unit = code1.code_id
+		    and code1.id = 7
+		    and code1.del_flg = 0
+		  left join tbl_code_master code2
+		    on stocking.stocking_reason = code2.code_id
+		    and code2.id = 2
+		    and code2.del_flg = 0
+		  left join tbl_code_master code3
+		    on stocking.stocking_status = code3.code_id
+		    and code3.id = 4
+		    and code3.del_flg = 0
+		where
+		  stocking.del_flg = 0
+		<if test="storegeCode != null and storegeCode != ''">
+			and stocking.storege_code = #{storegeCode}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and stocking.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and stocking.goods_code = #{goodsCode}
+		</if>
+		<if test="userCode != null and userCode != ''">
+			and stocking.user_code = #{userCode}
+		</if>
+		<if test="stockingStatus != null and stockingStatus != ''">
+			and stocking.stocking_status = #{stockingStatus}
+		</if>
+		<if test="stockingDateFrom != null">
+			and stocking.stocking_receipt >= #{stockingDateFrom}
+		</if>
+		<if test="stockingDateEnd != null">
+			and #{stockingDateEnd} >= stocking.stocking_receipt
+		</if>
+		order by stocking.stocking_receipt desc
+		limit #{offset},#{size};
+	</select>
+
+	<select id="selectAll" resultType="com.cbs.form.OS000V02DetailInfo">
+		SELECT
+		  stocking.id id
+		  , storage.storege_name storegeName
+		  , stockpile.category_name categoryName
+		  , stockpile.goods_name goodsName
+		  , userinfo.userName userName
+		  , stocking.stocking_receipt stockingReceipt
+		  , stocking.stocking_quantity stockingQuantity
+		  , code1.code_name stockingUnitName
+		  , code2.code_name stockingReasonName
+		  , code3.code_name stockingStatus
+		FROM
+		  tbl_stocking stocking
+		  left join tbl_storage_master storage
+		    on stocking.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on stocking.category_code = stockpile.category_code
+		    and stocking.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_user_master userinfo
+		    on stocking.user_code = userinfo.userID
+		    and userinfo.del_flg = 0
+		  left join tbl_code_master code1
+		    on stocking.stocking_unit = code1.code_id
+		    and code1.id = 7
+		    and code1.del_flg = 0
+		  left join tbl_code_master code2
+		    on stocking.stocking_reason = code2.code_id
+		    and code2.id = 2
+		    and code2.del_flg = 0
+		  left join tbl_code_master code3
+		    on stocking.stocking_status = code3.code_id
+		    and code3.id = 4
+		    and code3.del_flg = 0
+		where
+		  stocking.del_flg = 0
+		<if test="storegeCode != null and storegeCode != ''">
+			and stocking.storege_code = #{storegeCode}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and stocking.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and stocking.goods_code = #{goodsCode}
+		</if>
+		<if test="userCode != null and userCode != ''">
+			and stocking.user_code = #{userCode}
+		</if>
+		<if test="stockingStatus != null and stockingStatus != ''">
+			and stocking.stocking_status = #{stockingStatus}
+		</if>
+		<if test="stockingDateFrom != null">
+			and stocking.stocking_receipt >= #{stockingDateFrom}
+		</if>
+		<if test="stockingDateEnd != null">
+			and #{stockingDateEnd} >= stocking.stocking_receipt
+		</if>
+		order by stocking.stocking_receipt desc
+	</select>
+
+	<select id="select" resultType="com.cbs.entity.StockingEntity">
+        SELECT
+		  storege_code storegeCode
+		  , category_code categoryCode
+		  , goods_code goodsCode
+		  , user_code userCode
+		  , stocking_scheduled stockingScheduled
+		  , stocking_receipt stockingReceipt
+		  , st_expiration stExpiration
+		  , serial_number serialNumber
+		  , st_price stPrice
+		  , stocking_quantity stockingQuantity
+		  , stocking_unit stockingUnit
+		  , st_amount stAmount
+		  , stocking_reason stockingReason
+		  , stocking_status stockingStatus
+		  , st_comment stComment
+		FROM
+		  tbl_stocking
+		WHERE id = #{id}
+    </select>
+
+    <update id="delete">
+		update tbl_stocking
+		set del_flg=1
+		where id=#{id}
+	</update>
+
+</mapper>

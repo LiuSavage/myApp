@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>防災備品管理</title>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/css/app-style.css}" rel="stylesheet" type="text/css" />
+<link th:href="@{/css/style.css}" rel="stylesheet" type="text/css" />
+</head>
+<style>
+.is-invalid {
+	color: red;
+}
+</style>
+<body class="logobg_style">
+	<div id="large-header" class="large-header login-page">
+		<canvas id="demo-canvas" width="1590" height="1000"></canvas>
+		<div class="Retrieve_style">
+			<div class="Retrieve-content step-body" id="myStep">
+				<h1 class="title_name" style="color: black;">新規登録</h1>
+				<form method="post" role="form" id="myForm" name="myForm" class="login_padding"
+					th:action="@{/regterUS}" th:object="${us000V02Form}">
+					<div class="alert alert-danger">
+						<strong></strong>
+						<span th:each="msg:${#fields.globalErrors()}" th:text="${msg}"></span>
+					</div>
+					<div class="form-group clearfix">
+						<div class="input-group">
+							<input type="text" class="form-control" name="userId"
+								id="userId" placeholder="ログインID" maxlength="9"
+								autocomplete="off" th:disabled="*{kbn} == 2"
+								th:errorclass="is-invalid" th:value="*{userId}" />
+
+						</div>
+						<div class="help-bolck"
+							style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('userId')}" th:errors="*{userId}"></div>
+					</div>
+					
+					<div class="form-group clearfix">
+						<div class="input-group">
+							<input type="text" class="form-control" name="userName"
+								id="userName" placeholder="氏名" autocomplete="off" 
+								th:errorclass="is-invalid" th:value="*{userName}"
+								 maxlength="50" />
+
+						</div>
+						<div class="help-bolck"
+							style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
+					</div>
+
+					<div class="form-group clearfix">
+						<div class="input-group">
+							<input type="password" class="form-control" name="userPassword"
+								id="userPassword" placeholder="パスワード" autocomplete="off" 
+								 maxlength="20"
+								th:errorclass="is-invalid" th:value="*{userPassword}" />
+
+						</div>
+						<div class="help-bolck"
+							style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('userPassword')}" th:errors="*{userPassword}"></div>
+					</div>
+
+					<div class="form-group clearfix">
+						<div class="input-group">
+							<input type="password" class="form-control" name="checkPassword"
+								id="checkPassword" placeholder="パスワード(再入力)" autocomplete="off" 
+								th:errorclass="is-invalid" th:value="*{checkPassword}" maxlength="20"/>
+
+						</div>
+						<div class="help-bolck"
+							style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('checkPassword')}" th:errors="*{checkPassword}"></div>
+					</div>
+					
+					<div class="form-group clearfix">
+
+						<div class="input-group">
+							<input type="text" class="form-control" name="userMail"
+								id="userMail" placeholder="メールアドレス" autocomplete="off"
+								th:errorclass="is-invalid" th:value="*{userMail}" maxlength="30" />
+
+						</div>
+						<div class="help-bolck"
+							style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('userMail')}" th:errors="*{userMail}"></div>
+					</div>
+					
+					<div class="form-group clearfix">
+						<div class="input-group">
+							<select class="form-control col-sm-12" id="userArea"
+									name="userArea" onchange="changeArea()" th:errorclass="is-invalid">
+								<option th:each="area : ${us000V02Form.areaList}"
+									th:object="${area}" th:text="${area.value}"
+									th:value="${area.key}"
+									th:selected="${area.key == us000V02Form.userArea}">
+								</option>
+							</select>
+
+						</div>
+						<div class="help-bolck"
+							style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('userArea')}" th:errors="*{userArea}"></div>
+					</div>
+					
+					<div class="form-group clearfix">
+						<div class="input-group">
+							<select class="form-control col-sm-12" id="userCity"
+									name="userCity" th:errorclass="is-invalid">
+								<option th:each="city : ${us000V02Form.cityList}"
+									th:object="${city}" th:text="${city.value}"
+									th:value="${city.key}"
+									th:selected="${city.key == us000V02Form.userCity}">
+								</option>
+							</select>
+
+						</div>
+						<div class="help-bolck"
+							style="color: red; float: left;"
+							th:if="*{#fields.hasErrors('userCity')}" th:errors="*{userCity}"></div>
+					</div>
+					
+					<div class="form-group clearfix">
+						<div class="input-group">
+							<textarea class="form-control" rows="2" id="address1"
+									name="address1" th:text="${us000V02Form.address1}" 
+									maxlength="30" placeholder="番地"></textarea>
+						</div>
+					</div>
+					
+					<div class="tishi"></div>
+					<div class="form-group" th:if="*{kbn} != '2'">
+						<a th:href="@{/}" class="forget btn btn-danger">戻る</a>
+						<button class="btn btn-success btn-login fa fa-sign-in">登録</button>
+					</div>
+					<div class="form-group" th:if="*{kbn} == '2'">
+						<a th:href="@{/home}" class="forget btn btn-danger">戻る</a>
+						<button type="button" onclick="update()"
+							class="btn btn-success btn-login fa fa-sign-in">更新</button>
+					</div>
+					<input type="hidden" name="kbn" th:value="*{kbn}" />
+					<!-- Implemented in v1.1.4 -->
+					<div class="form-group"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+<script type="text/javascript">
+	function update(){
+		$("#myForm").attr("action", "/updateUS");
+		$("#myForm").submit();
+	}
+	
+	function changeArea() {
+		getCityList("/getCityUS", "myForm");
+	}
+	
+	function getCityList(url, form) {
+		$.ajax({
+			type : "POST",
+			url : url,
+			data : $("#" + form).serialize(),
+			async : false,
+			error : function(request) {
+				alert("Connection error");
+			},
+			success : function(data) {
+				$("#userCity").html($(data).find("#userCity").html());
+			}
+		});
+	}
+</script>
+</html>

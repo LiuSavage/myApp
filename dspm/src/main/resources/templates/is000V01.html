@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>防災備品管理</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{js/bootstrap-datepicker/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{/css/icons.css}" />
+<link rel="stylesheet" th:href="@{/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{/css/app-style.css}" />
+<link rel="stylesheet" th:href="@{/css/sidebar-menu.css}" />
+<link rel="stylesheet" th:href="@{/js/gallery/lightgallery.min.css}" />
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{js/header.js}"></script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<div th:include="common/wrapper :: wrapper"></div>
+		<div th:include="common/header :: header"></div>
+		<div class="clearfix"></div>
+		<div class="content-wrapper" id="content">
+			<div class="container-fluid">
+				<div class="row pt-2 pb-2">
+					<div class="col-sm-9">
+						<h4 class="page-title">在庫一覧</h4>
+					</div>
+					<div class="col-sm-3">
+						<div class="btn-group float-sm-right">
+							<div class="dropdown-menu"></div>
+						</div>
+					</div>
+				</div>
+				<form method="post" role="form" id="myForm" class="login_padding"
+					th:action="@{/searchIS}" th:object="${is000V01Form}">
+					<div th:include="common/message :: message"></div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-body searchStyleSet">
+									<div class="row">
+										<label for="input-10" class="col-sm-2 col-form-label">倉庫名</label>
+										<div class="col-sm-3">
+											<select id="storegeCode" name="storegeCode"
+												class="form-control">
+												<option th:each="storege : ${is000V01Form.storegeList}"
+													th:object="${storege}" th:text="${storege.value}"
+													th:value="${storege.key}"
+													th:selected="${storege.key == is000V01Form.storegeCode}">
+												</option>
+											</select>
+										</div>
+										<div class="col-sm-2"></div>
+										<label for="input-10" class="col-sm-2 col-form-label">在庫状況</label>
+										<div class="col-sm-3">
+											<select id="stockStatus" name="stockStatus"
+												class="form-control">
+												<option
+													th:each="stockStatus : ${is000V01Form.stockStatusList}"
+													th:object="${stockStatus}" th:text="${stockStatus.value}"
+													th:value="${stockStatus.key}"
+													th:selected="${stockStatus.key == is000V01Form.stockStatus}">
+												</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="input-11" class="col-sm-2 col-form-label">カテゴリー</label>
+										<div class="col-sm-3">
+											<select id="categoryCode" name="categoryCode"
+												class="form-control" onChange="getGoods()">
+												<option
+													th:each="category : ${is000V01Form.categoryCodeList}"
+													th:object="${category}" th:text="${category.value}"
+													th:value="${category.key}"
+													th:selected="${category.key == is000V01Form.categoryCode}">
+												</option>
+											</select>
+										</div>
+										<div class="col-sm-2"></div>
+										<label for="input-11" class="col-sm-2 col-form-label">備品名</label>
+										<div class="col-sm-3">
+											<select id="goodsCode" name="goodsCode" class="form-control">
+												<option th:each="goods : ${is000V01Form.goodsList}"
+													th:object="${goods}" th:text="${goods.value}"
+													th:value="${goods.key}"
+													th:selected="${goods.key == is000V01Form.goodsCode}">
+												</option>
+											</select>
+										</div>
+									</div>
+
+									<div class=" row">
+										<label for="input-12" class="col-sm-2 col-form-label">賞味/消費期限From</label>
+										<div class="col-sm-3">
+											<input type="text" id="expirationFrom" name="expirationFrom"
+												th:value="*{expirationFrom}" placeholder="年-月-日"
+												class="form-control checkDate" />
+										</div>
+										<div class="col-sm-2" style="text-align: center;">~</div>
+										<label for="input-13" class="col-sm-2 col-form-label">賞味/消費期限To</label>
+										<div class="col-sm-3">
+											<input type="text" id="expirationEnd" name="expirationEnd"
+												th:value="*{expirationEnd}" placeholder="年-月-日"
+												class="form-control checkDate" />
+										</div>
+									</div>
+
+									<div class="text-center">
+										<button type="submit" class="btn btn-success">検索</button>
+										<button id="clear" type="button" class="btn btn-success"
+											onclick="clearSearch()">クリア</button>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-header border-0">
+									合計件数：&nbsp;<span th:text="${is000V01Form.sumCount}"></span>件
+								</div>
+								<div>
+									<div class="table-responsive table-select">
+										<table
+											class="table table-bordered table-striped text-center mb-3">
+											<thead>
+												<tr class="info">
+													<th class="text-center">NO</th>
+													<th class="text-center">倉庫名</th>
+													<th class="text-center">カテゴリー</th>
+													<th class="text-center">備品名</th>
+													<th class="text-center">在庫数</th>
+													<th class="text-center">在庫単位</th>
+													<th class="text-center">単価/円</th>
+													<th class="text-center">賞味／消費期限</th>
+													<th class="text-center">在庫状況</th>
+													<th class="text-center">棚卸状況</th>
+													<th class="text-center">操作</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr th:each="item,loop : ${is000V01Form.stockList}">
+													<td
+														th:text="${loop.count}+(${is000V01Form.pageSize}*(${is000V01Form.pageNo}-1))"></td>
+													<td>
+														<span data-toggle="modal"
+															th:attr="data-target='#myModal'+${item.id }"
+															style="cursor:pointer;" th:text="${item.storegeName}"></span>
+														<div class="modal fade" th:id="'myModal'+${item.id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+															<div class="modal-dialog">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+																			<span>&times;</span>
+																		</button>
+																	</div>
+																	<div class="modal-body">
+																		<div class="form-group row payment-tab2" th:if="${item.photo != null}">
+																			<div class="lookimg" th:id="'lightgallery'+${item.id}">
+																				<a th:each=" photo : ${#strings.arraySplit(item.photo , ',')}"
+																					onclick="zoomPhoto(this)">
+																					<img th:src="@{'/uploadPath/stock/' + ${photo}}" onload="loadImg(this,130,130)" />
+																				</a>
+																			</div>
+																		</div>
+																		<div th:if="${item.photo == null}">写真がありません</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</td>
+													<td th:text="${item.categoryName}"></td>
+													<td th:text="${item.goodsName}"></td>
+													<td th:text="${item.stockNumber}"></td>
+													<td th:text="${item.stockUnitName}"></td>
+													<td th:text="${item.stPrice}"></td>
+													<td th:text="${item.stExpiration}"></td>
+													<td th:text="${item.stockStatusSnap}"></td>
+													<td th:utext="${#strings.replace(item.status,'\n','&lt;br/&gt;')}"></td>
+													<td><a
+														th:href="@{/initSI(kbn=4,storegeCode=${item.storegeCode},
+														categoryCode=${item.categoryCode},
+														goodsCode=${item.goodsCode},
+														stExpiration=${item.stExpiration},
+														stPrice=${item.stPrice},
+														stUnit=${item.stUnit},
+														stockNumber=${item.stockNumber})}"
+														class="btn btn-primary btn-sm">棚卸</a></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<ul class="pagination" style="float: left;">
+										<li><a th:href="@{/stockCsvDown}" class="btn btn-primary"
+											style="color: balck">一覧ダウンロード</a></li>
+										<li>&nbsp;<a th:href="@{/shedList}" class="btn btn-primary"
+											style="color: balck">&nbsp;棚　卸　一　覧&nbsp;</a></li>
+									</ul>
+									<ul class="pagination" style="float: right;"
+										th:if="${is000V01Form.stockList} != null and ${is000V01Form.stockList.size()} > 0">
+										<li class="disabled page-link"
+											th:styleappend="${is000V01Form.pageNo == 1}?'pointer-events: none; background-color: rgba(0,0,0,.05);':'cursor:pointer;'"
+											th:onclick="'getPageData(\''+${is000V01Form.pageNo-1}+'\');'"><a
+											aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+										</li>
+
+										<li class="page-link"
+											th:styleappend="${is000V01Form.pageNo == i}?'font-weight:bold;background-color:#3b5998;color:#fff;'"
+											th:each="i:${#numbers.sequence(is000V01Form.startPage,is000V01Form.endPage)}"><a
+											th:text="${i}" th:onclick="'getPageData(\''+${i}+'\');'"></a></li>
+
+										<li class="page-link"
+											th:styleappend="${is000V01Form.pageNo == is000V01Form.sumPage}?'pointer-events: none; background-color: rgba(0,0,0,.05);'"
+											th:onclick="'getPageData(\''+${is000V01Form.pageNo+1}+'\');'"><a
+											aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+									</ul>
+									<input type="hidden" id="pageNo" name="pageNo"
+										th:value="${is000V01Form.pageNo}" /> <input type="hidden"
+										id="startPage" name="startPage"
+										th:value="${is000V01Form.startPage}" /> <input type="hidden"
+										id="endPage" name="endPage" th:value="${is000V01Form.endPage}" />
+									<input type="hidden" id="sumPage" name="sumPage"
+										th:value="${is000V01Form.sumPage}" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="lightgallery" hidden="hidden"></div>
+		<div th:include="common/footer :: footer"></div>
+	</div>
+
+	<script>
+		function getGoods() {
+			getGoodsList("/getStockListGoods", "myForm");
+		}
+
+		function clearSearch() {
+			$("#storegeCode").val("");
+			$("#stockStatus").val("");
+			$("#categoryCode").val("");
+			$("#goodsCode").val("");
+			$("#expirationFrom").val("");
+			$("#expirationEnd").val("");
+		}
+
+		function getPageData(pageNo) {
+			$('#pageNo').val(pageNo);
+			ajax("POST", "/stockPage", "myForm");
+		}
+	</script>
+	
+	<script type="text/javascript" th:src="@{js/const.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/sidebar-menu.js}"></script>
+	<script type="text/javascript" th:src="@{js/app-script.js}"></script>
+	<script type="text/javascript" th:src="@{js/select2.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/gallery/lightgallery.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/gallery/lg-zoom.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/gallery/lg-fullscreen.min.js}"></script>
+	<script>
+		$("#expirationFrom").datepicker({
+			autoclose : true,
+			format : 'yyyy-mm-dd'
+		});
+
+		$("#expirationEnd").datepicker({
+			autoclose : true,
+			format : 'yyyy-mm-dd'
+		});
+
+		var galleryId = "lightgallery";
+		function zoomPhoto(obj){
+			var galleryDiv = $(obj).parent(".lookimg").html();
+			$("#lightgallery").html(galleryDiv);
+			var aTag = $("#lightgallery").find("a");
+			var imgUrl = "";
+			for (var a of aTag) {
+				imgUrl = $(a).find("img").attr("src");
+				$(a).attr("href",imgUrl);
+				$(a).removeAttr("onclick");
+			}
+			lightGallery(document.getElementById(galleryId));
+			$("#lightgallery").find("a:first").find("img").click();
+			$(obj).parents(".modal-content").find("button.close").click();
+		}
+	</script>
+</body>
+</html>

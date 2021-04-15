@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<body>
+	<div id="wrapper" th:fragment="wrapper">
+		<div id="sidebar-wrapper" data-simplebar=""
+			data-simplebar-auto-hide="true">
+			<div class="brand-logo"></div>
+			<div class="user-details">
+				<div class="media align-items-center user-pointer collapsed"
+					data-toggle="collapse" data-target="#user-dropdown">
+					<div class="media-body">
+						<h6 class="side-user-name" th:text="${session.loginName}+' 様'"></h6>
+					</div>
+				</div>
+				<div id="user-dropdown" class="collapse">
+					<ul class="user-setting-menu">
+						<li><a th:href="@{/updInitUS}"><i class="icon-user"></i>
+								My Profile</a></li>
+						<li><a th:href="@{/logOut}"><i class="icon-power"></i>
+								Logout</a></li>
+					</ul>
+				</div>
+			</div>
+			<input type="hidden" id="siteUrlHidden"
+				th:value="${leftMenuClass!=null?leftMenuClass:''}" />
+			<ul class="sidebar-menu do-nicescrol">
+				<li class="home"><a th:href="@{/home}" class="waves-effect">
+						<i class="zmdi zmdi-widgets"></i> <span>HOME</span>
+				</a></li>
+
+				<li
+					th:if="${session.userAuth == 5 or session.userAuth == 4 or session.userAuth == 3}"><a
+					href="javaScript:void();" class="waves-effect"> <span>備品</span><i
+						class="fa fa-angle-left pull-right"></i>
+				</a>
+					<ul class="sidebar-submenu">
+						<li class="initPS regterPS updatePS"><a th:href="@{/initPS}"><i
+								class="zmdi zmdi-long-arrow-right"></i> 入庫備品入力</a></li>
+						<li class="initListPS searchPS updSearchPS deletePS"><a
+							th:href="@{/initListPS}"><i
+								class="zmdi zmdi-long-arrow-right"></i> 入庫備品一覧</a></li>
+					</ul></li>
+
+				<li
+					th:if="${session.userAuth == 5 or session.userAuth == 4 or session.userAuth == 2}"><a
+					href="javaScript:void();" class="waves-effect"> <span>使用備品</span><i
+						class="fa fa-angle-left pull-right"></i>
+				</a>
+					<ul class="sidebar-submenu">
+						<li class="initOS insertST updateST"><a th:href="@{/initOS}"><i
+								class="zmdi zmdi-long-arrow-right"></i> 使用備品入力</a></li>
+						<li
+							class="stockingList stockingSearch updStockingSearch deleteStocking"><a
+							th:href="@{/stockingList}"><i
+								class="zmdi zmdi-long-arrow-right"></i> 使用済一覧</a></li>
+					</ul></li>
+
+				<li class="initIS searchIS"><a th:href="@{/initIS}"
+					class="waves-effect"> <span>在庫一覧</span></a></li>
+
+				<li class="stockExpirationList stockExpirationSearch"><a
+					th:href="@{/stockExpirationList}" class="waves-effect"> <span>賞味/消費期限一覧</span>
+				</a></li>
+
+				<li
+					th:if="${session.userAuth == 5 or session.userAuth == 4 or session.userAuth == 1}"><a
+					href="javaScript:void();" class="waves-effect"> <span>倉庫間移動</span>
+						<i class="fa fa-angle-left pull-right"></i>
+				</a>
+					<ul class="sidebar-submenu">
+						<li class="regterWM moveInWM updateWM"><a
+							th:href="@{/moveInWM}"> <i class="zmdi zmdi-long-arrow-right"></i>
+								倉庫間移動入力
+						</a></li>
+						<li class="moveList moveSearch moveUpdSearch deleteWM"><a
+							th:href="@{/moveList}"> <i class="zmdi zmdi-long-arrow-right"></i>
+								倉庫間移動一覧
+						</a></li>
+					</ul></li>
+				<li th:if="${session.userAuth == 5}"
+					class="initSM regterSM"><a th:href="@{/initSM}"
+					class="waves-effect"> <span>マスター管理</span></a></li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

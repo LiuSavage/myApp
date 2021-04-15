@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>防災備品管理</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{js/bootstrap-datepicker/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{/css/icons.css}" />
+<link rel="stylesheet" th:href="@{/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{/css/app-style.css}" />
+<link rel="stylesheet" th:href="@{/css/sidebar-menu.css}" />
+<link rel="stylesheet" th:href="@{/css/chart.css}" />
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<style>
+#mainTable td {
+	padding: .30rem;
+}
+</style>
+
+
+<body>
+	<div id="wrapper">
+		<div th:include="common/wrapper :: wrapper"></div>
+		<div th:include="common/header :: header"></div>
+
+		<div class="clearfix"></div>
+
+		<div class="content-wrapper">
+			<div class="container-fluid">
+
+				<div class="card">
+					<div class="card-header"
+						th:text="${hp000V01Form.infoList.areaName}+${hp000V01Form.infoList.cityName}+'人口動態シュミレーション'"></div>
+					<div class="card-content">
+						<div class="row row-group m-0">
+							<div class="col-12 col-lg-12 col-xl-6">
+								<div class="card-body">
+									<table class="table" id="mainTable">
+										<!-- <thead>
+											<tr>
+												<td>世代数</td>
+												<td>4,178</td>
+											</tr>
+										</thead> -->
+										<tbody>
+											<tr>
+												<td width="30%" class="text-left">男性</td>
+												<td width="30%" class="text-right" th:text="${hp000V01Form.infoList.man}+'人'"></td>
+												<td width="40%"></td>
+											</tr>
+											<tr>
+												<td width="30%" class="text-left">女性</td>
+												<td width="30%" class="text-right" th:text="${hp000V01Form.infoList.woman}+'人'"></td>
+												<td width="40%"></td>
+											</tr>
+											<tr>
+												<td width="30%" class="text-left">老人</td>
+												<td width="30%" class="text-right" th:text="${hp000V01Form.infoList.aged}+'人'"></td>
+												<td width="40%"></td>
+											</tr>
+											<!-- <tr>
+												<td>子供</td>
+												<td>8,947</td>
+											</tr>
+											<tr>
+												<td>幼児</td>
+												<td>9,947</td>
+											</tr> -->
+											<tr>
+												<td width="30%" class="text-left">外国籍</td>
+												<td width="30%" class="text-right" th:text="${hp000V01Form.infoList.foreigners}+'人'"></td>
+												<td width="40%"></td>
+											</tr>
+											<tr>
+												<td width="30%" class="text-left">障害者</td>
+												<td width="30%" class="text-right" th:text="${hp000V01Form.infoList.disability}+'人'"></td>
+												<td width="40%"></td>
+											</tr>
+											<tr>
+												<td width="30%" class="text-left">
+													<h5>総人口数</h5>
+												</td>
+												<td width="30%" class="text-right">
+													<h5 class="totalPeaple text-right " ></h5>
+												</td>
+												<td width="40%"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="col-12 col-lg-12 col-xl-6">
+								<div class="card-body">
+									<canvas id="impressions-add"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row">
+					<div class="col-12 col-lg-6 col-xl-4">
+						<div class="card" style="height:402px;">
+							<div class="card-body">
+							        <div class="weatherMain">
+							            <div class="day">
+							                <div>
+							                    <div>
+							                        <strong>現在の天気</strong>
+							                    </div>
+							                    <div>
+							                        <span>天気：</span><span class="dayWeather"></span>
+							                    </div>
+							                    <div>
+							                        <img class="dayWeatherIcon" />
+							                    </div>
+							                    <div>
+							                        <span>気温：</span><span class="nowTemp"></span><span>度</span>
+							                    </div>
+							                </div>
+							            </div>
+							            <div class="tomorrow">
+							                <div>
+							                    <div>
+							                        <strong>明日9時の天気</strong>
+							                    </div>
+							                    <div>
+							                        <span>天気：</span><span class="tomorrowWeather"></span>
+							                    </div>
+							                    <div>
+							                        <img class="tomorrowWeatherIcon" />
+							                    </div>
+							                    <div>
+							                        <span>気温：</span><span class="tomorrowTemp"></span><span>度</span>
+							                    </div>
+							                </div>
+							            </div>
+							            <div class="dayAfterTomorrow">
+							                <div>
+							                    <div>
+							                        <strong>明後日9時の天気</strong>
+							                    </div>
+							                    <div>
+							                        <span>天気：</span><span class="dayAfterTomorrowWeather"></span>
+							                    </div>
+							                    <div>
+							                        <img class="dayAfterTomorrowWeatherIcon" />
+							                    </div>
+							                    <div>
+							                        <span>気温：</span><span class="dayAfterTomorrowTemp"></span><span>度</span>
+							                    </div>
+							                </div>
+							            </div>
+							        </div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="col-lg-12 col-lg-12 col-xl-8">
+						<div class="card">
+							<div class="card-header text-uppercase">
+								<form method="post" name="changeCategoryForm"
+									id="changeCategoryForm">
+									<span
+										th:text="${hp000V01Form.infoList.areaName}+${hp000V01Form.infoList.cityName}+'在庫統計'">在庫統計</span>
+									<label for="basic-select" class=" col-form-label">カテゴリー</label>
+									<select class="form-control col-sm-2" id="categoryCode"
+										name="categoryCode" onchange="changeCategory()">
+										<option
+											th:each="category,categoryStart : ${hp000V01Form.categoryList}"
+											th:if="${categoryStart.index != 0}" th:object="${category}"
+											th:text="${category.value}" th:value="${category.key}"
+											th:selected="${category.key == hp000V01Form.categoryCode}">
+										</option>
+									</select>
+								</form>
+							</div>
+							<div class="card-body table-responsive">
+								<div id="bar-chart" style="height: 300px;"
+									class="table align-items-center table-flush"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-12 col-lg-12 col-xl-12">
+						<div class="card">
+							<div class="card-header border-0">お知らせ</div>
+							<div class="table-responsive" style="height: 272px;">
+								<table
+									class="table align-items-center table-flush">
+									<thead>
+										<tr>
+											<th>更新日</th>
+											<th>更新内容</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="message : ${hp000V01Form.messageList}">
+											<td style="width: 100px;">
+												<div class="d-flex align-items-center">
+													<span class="mr-2" th:text="${message.updateDate}"></span>
+												</div>
+											</td>
+											<td>
+												<div class="d-flex align-items-center"
+													onclick="stockTarget(this)" style="cursor: pointer;">
+													<input type="hidden" id="targetUrl"
+														th:value="${message.targetUrl=='1'?'initOS':(message.targetUrl=='2'?'initPS':'moveInWM')}" />
+													<input type="hidden" id="targetId" th:value="${message.id}" />
+													<span th:text="${message.userName}"></span> <span>さんが</span>
+													<span
+														th:text="${message.targetUrl=='1'?'出庫':(message.targetUrl=='2'?'入庫':'倉庫間移動')}"
+														class="text-primary"></span> <span>処理を行いました。</span>
+												</div>
+											</td>
+										</tr>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div th:include="common/footer :: footer"></div>
+	</div>
+	<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/const.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/sidebar-menu.js}"></script>
+	<script type="text/javascript" th:src="@{js/app-script.js}"></script>
+	<script type="text/javascript" th:src="@{js/select2.min.js}"></script>
+	<script th:inline="javascript">
+		var goodsNumList = [[${hp000V01Form.goodsNumList}]];
+		var infoList = [[${hp000V01Form.infoList}]];
+		function changeCategory(){
+			$("#changeCategoryForm").attr("action","/home");
+			$("#changeCategoryForm").submit();
+		}
+	</script>
+	<script type="text/javascript" th:src="@{js/chart/easypiechart.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/chart/raphael-min.js}"></script>
+	<script type="text/javascript" th:src="@{js/chart/Chart.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/chart/chart.js}"></script>
+	<script type="text/javascript" th:src="@{js/chart.js}"></script>
+	<script type="text/javascript" th:src="@{js/weather.js}"></script>
+
+</body>
+</html>

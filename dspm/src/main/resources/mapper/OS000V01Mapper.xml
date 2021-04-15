@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbs.dao.OS000V01Mapper">
+
+    <select id="select" resultType="com.cbs.entity.StockingEntity">
+        SELECT
+		  storege_code storegeCode
+		  , category_code categoryCode
+		  , goods_code goodsCode
+		  , user_code userCode
+		  , stocking_scheduled stockingScheduled
+		  , stocking_receipt stockingReceipt
+		  , st_expiration stExpiration
+		  , serial_number serialNumber
+		  , st_price stPrice
+		  , stocking_quantity stockingQuantity
+		  , stocking_unit stockingUnit
+		  , st_amount stAmount
+		  , stocking_reason stockingReason
+		  , stocking_status stockingStatus
+		  , st_comment stComment
+		FROM
+		  tbl_stocking
+		WHERE id = #{id}
+    </select>
+
+	<insert id="insert" parameterType="com.cbs.entity.StockingEntity">
+		INSERT
+		INTO tbl_stocking(
+		storege_code
+		  , category_code
+		  , goods_code
+		  , user_code
+		  , stocking_scheduled
+		  , stocking_receipt
+		  , st_expiration
+		  , serial_number
+		  , st_price
+		  , stocking_quantity
+		  , stocking_unit
+		  , st_amount
+		  , stocking_reason
+		  , stocking_status
+		  , st_comment
+		  , del_flg
+		  , insert_date
+		  , insert_user
+		  , update_date
+		  , update_user
+		  , storing_id
+		)
+		VALUES (
+		   #{storegeCode}
+		  , #{categoryCode}
+		  , #{goodsCode}
+		  , #{userCode}
+		  , #{stockingScheduled}
+		  , #{stockingReceipt}
+		  , #{stExpiration}
+		  , #{serialNumber}
+		  , #{stPrice}
+		  , #{stockingQuantity}
+		  , #{stockingUnit}
+		  , #{stAmount}
+		  , #{stockingReason}
+		  , #{stockingStatus}
+		  , #{stComment}
+		  , #{delFlg}
+		  , #{insertDate}
+		  , #{insertUser}
+		  , #{updateDate}
+		  , #{updateUser}
+		  , #{storingId}
+		)
+	</insert>
+
+	<update id="delete">
+		update tbl_stocking
+		set del_flg=1
+		where id=#{id}
+	</update>
+
+    <select id="selectStock" resultType="com.cbs.entity.StockEntity">
+		select
+		  id
+		  , storege_code storegeCode
+		  , category_code categoryCode
+		  , goods_code goodsCode
+		  , stock_number stockNumber
+		  , st_unit stUnit
+		  , st_expiration stExpiration
+		  , serial_number serialNumber
+		  , st_price stPrice
+		  , st_amount stAmount
+		  , stock_status stockStatus
+		  , st_comment stComment
+		FROM
+		  tbl_stock
+		WHERE
+		  storege_code = #{storegeCode}
+		  and category_code = #{categoryCode}
+		  and goods_code = #{goodsCode}
+		  and st_price = #{stPrice}
+		  and st_expiration = #{stExpiration}
+		  and st_unit = #{stockingUnit}
+		  and del_flg = 0
+	</select>
+	
+	<select id="selectStockPhoto" resultType="com.cbs.entity.StockEntity">
+		select
+		  id
+		  , storege_code storegeCode
+		  , category_code categoryCode
+		  , goods_code goodsCode
+		  , stock_number stockNumber
+		  , st_unit stUnit
+		  , st_expiration stExpiration
+		  , serial_number serialNumber
+		  , st_price stPrice
+		  , st_amount stAmount
+		  , stock_status stockStatus
+		  , st_comment stComment
+		  ,photo
+		FROM
+		  tbl_stock
+		WHERE
+		  storege_code = #{storegeCode}
+		  and category_code = #{categoryCode}
+		  and goods_code = #{goodsCode}
+		  and st_price = #{stPrice}
+		  and st_expiration = #{stExpiration}
+		  and st_unit = #{stockingUnit}
+		  and del_flg = 0
+	</select>
+
+	<update id="deleteStock">
+		update tbl_stock
+		set del_flg=1
+		where id=#{id}
+	</update>
+
+	<insert id="insertStock" parameterType="com.cbs.entity.StockEntity">
+		INSERT
+		INTO tbl_stock(
+		  storege_code
+		  , category_code
+		  , goods_code
+		  , stock_number
+		  , st_unit
+		  , st_expiration
+		  , serial_number
+		  , st_price
+		  , st_amount
+		  , stock_status
+		  , st_comment
+		  , del_flg
+		  , insert_date
+		  , insert_user
+		  , update_date
+		  , update_user
+		)
+		VALUES (
+		  #{storegeCode}
+		  , #{categoryCode}
+		  , #{goodsCode}
+		  , #{stockNumber}
+		  , #{stUnit}
+		  , #{stExpiration}
+		  , #{serialNumber}
+		  , #{stPrice}
+		  , #{stAmount}
+		  , #{stockStatus}
+		  , #{stComment}
+		  , #{delFlg}
+		  , #{insertDate}
+		  , #{insertUser}
+		  , #{updateDate}
+		  , #{updateUser}
+		)
+	</insert>
+
+</mapper>

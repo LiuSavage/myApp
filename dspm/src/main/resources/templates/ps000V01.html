@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>防災備品管理</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{js/bootstrap-datepicker/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{/css/icons.css}" />
+<link rel="stylesheet" th:href="@{/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{/css/app-style.css}" />
+<link rel="stylesheet" th:href="@{/css/sidebar-menu.css}" />
+<link rel="stylesheet" th:href="@{/js/gallery/lightgallery.min.css}" />
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{js/header.js}"></script>
+</head>
+<body>
+
+	<div id="wrapper">
+		<div th:include="common/wrapper :: wrapper"></div>
+		<div th:include="common/header :: header"></div>
+		<div class="clearfix"></div>
+		<div class="content-wrapper" id="content">
+			<div class="container-fluid">
+				<div class="row pt-2 pb-2">
+					<div class="col-sm-9">
+						<h4 class="page-title">入庫備品入力</h4>
+					</div>
+					<div class="col-sm-3">
+						<div class="btn-group float-sm-right">
+							<div class="dropdown-menu"></div>
+						</div>
+					</div>
+				</div>
+				<form method="post" role="form" id="myForm" class="login_padding"
+					th:action="@{/regterPS}" th:object="${ps000V01Form}"
+					enctype="multipart/form-data">
+					<div th:include="common/message :: message"></div>
+					<input type="hidden" id="id" name="id" th:value="*{id}" /> <input
+						type="hidden" id="kbn" name="kbn" th:value="*{kbn}" /> <input
+						type="hidden" name="storegeCode"
+						th:value="${ps000V01Form.storegeCode}"
+						th:if="${ps000V01Form.kbn} == '2'" /><input type="hidden"
+						name="categoryCode" th:value="${ps000V01Form.categoryCode}"
+						th:if="${ps000V01Form.kbn} == '2'" /> <input type="hidden"
+						name="goodsCode" th:value="${ps000V01Form.goodsCode}"
+						th:if="${ps000V01Form.kbn} == '2'" />
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-body">
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">倉庫名</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="storegeCode" name="storegeCode"
+												th:errorclass="is-invalid"
+												th:disabled="${ps000V01Form.kbn} == '1' or ${ps000V01Form.kbn} == '2'">
+												<option th:each="storege : ${ps000V01Form.storegeList}"
+													th:object="${storege}" th:text="${storege.value}"
+													th:value="${storege.key}"
+													th:selected="${storege.key == ps000V01Form.storegeCode}"
+													th:disabled="${ps000V01Form.kbn} == '1'"></option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('storegeCode')}"
+												th:errors="*{storegeCode}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">カテゴリー</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="categoryCode" name="categoryCode"
+												th:errorclass="is-invalid" onChange="getGoods()"
+												th:disabled="${ps000V01Form.kbn} == '1' or ${ps000V01Form.kbn} == '2'">
+												<option
+													th:each="category : ${ps000V01Form.categoryCodeList}"
+													th:object="${category}" th:text="${category.value}"
+													th:value="${category.key}"
+													th:selected="${category.key == ps000V01Form.categoryCode}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('categoryCode')}"
+												th:errors="*{categoryCode}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">備品名</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="goodsCode" name="goodsCode" th:errorclass="is-invalid"
+												th:disabled="${ps000V01Form.kbn} == '1' or ${ps000V01Form.kbn} == '2'">
+												<option th:each="goods : ${ps000V01Form.goodsList}"
+													th:object="${goods}" th:text="${goods.value}"
+													th:value="${goods.key}"
+													th:selected="${goods.key == ps000V01Form.goodsCode}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('goodsCode')}"
+												th:errors="*{goodsCode}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">入庫者</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="userCode" name="userCode" th:errorclass="is-invalid"
+												th:disabled="${ps000V01Form.kbn} == '1'">
+												<option th:each="user : ${ps000V01Form.userCodeList}"
+													th:object="${user}" th:text="${user.value}"
+													th:value="${user.key}"
+													th:selected="${user.key == ps000V01Form.userCode}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('userCode')}"
+												th:errors="*{userCode}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">入庫予定日</label>
+										<div class="col-sm-9">
+											<em style="color: #fff;">*</em>
+											<input type="text" id="stScheduled" name="stScheduled"
+												th:value="*{stScheduled}"
+												th:disabled="${ps000V01Form.kbn} == '1'" placeholder="年-月-日"
+												th:errorclass="is-invalid" class="form-control checkDate" />
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stScheduled')}"
+												th:errors="*{stScheduled}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">入庫日</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <input type="text"
+												id="stReceipt" name="stReceipt" th:value="*{stReceipt}"
+												th:disabled="${ps000V01Form.kbn} == '1'" placeholder="年-月-日"
+												th:errorclass="is-invalid" class="form-control checkDate" />
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stReceipt')}"
+												th:errors="*{stReceipt}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">賞味/消費期限</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <input type="text"
+												id="stExpiration" name="stExpiration"
+												th:value="*{stExpiration}"
+												th:disabled="${ps000V01Form.kbn} == '1'" placeholder="年-月-日"
+												th:errorclass="is-invalid" class="form-control checkDate" />
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stExpiration')}"
+												th:errors="*{stExpiration}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">LOT/シリアルNO</label>
+										<div class="col-sm-9">
+											<em style="color: #fff;">*</em>
+											<input type="text" maxlength="15"
+												onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
+												id="serialNumber" name="serialNumber"
+												th:value="${ps000V01Form.serialNumber}"
+												th:disabled="${ps000V01Form.kbn} == '1'"
+												class="form-control" />
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">単価</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <input type="tel"
+												maxlength="9" id="stPrice" name="stPrice"
+												th:value="${ps000V01Form.stPrice}"
+												th:disabled="${ps000V01Form.kbn} == '1'"
+												th:errorclass="is-invalid" class="form-control formatNumble"
+												onChange="sum()" />
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stPrice')}"
+												th:errors="*{stPrice}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">入庫数</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <input type="tel"
+												maxlength="9" id="stQuantity" name="stQuantity"
+												th:value="${ps000V01Form.stQuantity}"
+												th:disabled="${ps000V01Form.kbn} == '1'"
+												th:errorclass="is-invalid" class="form-control formatNumble"
+												onChange="sum()" />
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stQuantity')}"
+												th:errors="*{stQuantity}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">入庫単位</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="stUnit" name="stUnit" th:errorclass="is-invalid"
+												th:disabled="${ps000V01Form.kbn} == '1'">
+												<option th:each="code : ${ps000V01Form.unitList}"
+													th:object="${stUnit}" th:text="${code.value}"
+													th:value="${code.key}"
+													th:selected="${code.key == ps000V01Form.stUnit}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stUnit')}" th:errors="*{stUnit}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">金額</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <input type="number"
+												maxlength="15" id="stAmount" name="stAmount"
+												th:value="${ps000V01Form.stAmount}" class="form-control"
+												readonly="readonly" />
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">入庫理由</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="stReason" name="stReason" th:errorclass="is-invalid"
+												th:disabled="${ps000V01Form.kbn} == '1'">
+												<option th:each="code : ${ps000V01Form.resonList}"
+													th:object="${stReason}" th:text="${code.value}"
+													th:value="${code.key}"
+													th:selected="${code.key == ps000V01Form.stReason}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stReason')}"
+												th:errors="*{stReason}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">ステータス</label>
+										<div class="col-sm-9">
+											<em style="color: red;">*</em> <select class="form-control"
+												id="stStatus" name="stStatus" th:errorclass="is-invalid"
+												th:disabled="${ps000V01Form.kbn} == '1'">
+												<option th:each="code : ${ps000V01Form.codeList}"
+													th:object="${stStatus}" th:text="${code.value}"
+													th:value="${code.key}"
+													th:selected="${code.key == ps000V01Form.stStatus}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('stStatus')}"
+												th:errors="*{stStatus}"></div>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-2 col-form-label">備考</label>
+										<div class="col-sm-9">
+											<em style="color: #fff;">*</em>
+											<textarea class="form-control" rows="4" id="stComment"
+												th:text="${ps000V01Form.stComment}" maxlength="50"
+												th:disabled="${ps000V01Form.kbn} == '1'" name="stComment"></textarea>
+										</div>
+									</div>
+									<div class="form-group row payment-tab2">
+										<label for="basic-select" class="col-sm-2 col-form-label">写真</label>
+										<div class="col-sm-9"
+											th:if="${ps000V01Form.kbn} != '1' and ${ps000V01Form.kbn} != '2'">
+											<em style="color: #fff;">*</em>
+											<input id="div_imgfile" class="btn btn-primary center-block"
+												value="写真を選択" type="button" />
+											<div id="div_imglook" class="center-block">
+												<div style="clear: both;"></div>
+											</div>
+										</div>
+										<div class="col-sm-9" th:if="${ps000V01Form.kbn} == '2'">
+											<em style="color: #fff;">*</em>
+											<input id="div_imgfile" class="btn btn-primary center-block"
+												value="写真を選択" type="button" />
+											<div id="div_imglook" class="center-block">
+												<div style="clear: both;"></div>
+												<div th:if="${ps000V01Form.photoList != null}"
+													class="lookimg"
+													th:each=" photo : ${ps000V01Form.photoList}">
+													<input type="hidden" name="photoList" class="fileInput"
+														th:value="${photo}" />
+													<div class="lookimg_delBtn" style="display: none;">キャンセル</div>
+													<div class="lookimg_progress">
+														<div></div>
+													</div>
+													<img th:src="@{'/uploadPath/storing/' + ${photo}}"
+														onload="loadImg(this,130,130)" />
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-9" th:if="${ps000V01Form.kbn} == '1'">
+											<em style="color: #fff;">*</em>
+											<div id="div_imglook" class="center-block demo-gallery">
+												<div th:if="${ps000V01Form.photoList != null}"
+													class="lookimg" id="lightgallery">
+													<a th:each=" photo : ${ps000V01Form.photoList}"
+														th:href="@{'/uploadPath/'+${ps000V01Form.stReason == '1002'?'stock':'storing'} + '/' + ${photo}}">
+														<img
+														th:src="@{'/uploadPath/'+${ps000V01Form.stReason == '1002'?'stock':'storing'}+'/' + ${photo}}"
+														onload="loadImg(this,130,130)" />
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-footer text-center">
+										<a th:href="@{/initListPS}" class="btn btn-danger"
+											th:if="${ps000V01Form.kbn} == '1' and ${ps000V01Form.hkbn} =='3' and ${ps000V01Form.kbn} != '2'">
+											<i class="fa fa-times"></i> 戻る
+										</a><a th:href="@{/updSearchPS}" class="btn btn-danger"
+											th:if="${ps000V01Form.kbn} == '1' and ${ps000V01Form.hkbn} !='3' or ${ps000V01Form.kbn} == '2'">
+											<i class="fa fa-times"></i> 戻る
+										</a><a th:href="@{/initListPS}" class="btn btn-danger"
+											th:if="${ps000V01Form.kbn} != '1' and ${ps000V01Form.kbn} != '2'">
+											<i class="fa fa-times"></i> 戻る
+										</a>
+										<button type="button" class="btn btn-success"
+											onclick="reg(this)"
+											th:if="${ps000V01Form.kbn} != '1' and ${ps000V01Form.kbn} != '2'">
+											<i class="fa fa-check-square-o"></i> 登録
+										</button>
+										<button type="button" class="btn btn-success"
+											onclick="update(this)" th:if="${ps000V01Form.kbn} == '2'">
+											<i class="fa fa-check-square-o"></i> 更新
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div th:include="common/footer :: footer"></div>
+	</div>
+
+	<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/const.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/sidebar-menu.js}"></script>
+	<script type="text/javascript" th:src="@{js/app-script.js}"></script>
+	<script type="text/javascript" th:src="@{js/select2.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/gallery/lightgallery.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/gallery/lg-zoom.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/gallery/lg-fullscreen.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/fileUp.js}"></script>
+
+	<script th:inline="javascript">
+		function sum() {
+			$("#stAmount").val($("#stPrice").val() * $("#stQuantity").val());
+		}
+
+		function getGoods() {
+			getGoodsList("/getStoringGoods", "myForm");
+		}
+
+		function reg(obj) {
+			$(obj).blur();
+			Ewin.confirm({
+				message : "登録してよろしいですか？"
+			}).on(function(e) {
+				if (!e) {
+					return;
+				}
+				$("#myForm").submit();
+			});
+		}
+
+		function update(obj) {
+			$(obj).blur();
+			Ewin.confirm({
+				message : "更新してよろしいですか？"
+			}).on(function(e) {
+				if (!e) {
+					return;
+				}
+				$("#myForm").attr("action", "/updatePS");
+				$("#myForm").submit();
+			});
+		}
+	</script>
+
+	<script>
+		$("#stScheduled").datepicker({
+			autoclose : true,
+			format : 'yyyy-mm-dd'
+		});
+		$("#stReceipt").datepicker({
+			autoclose : true,
+			format : 'yyyy-mm-dd'
+		});
+
+		$("#stExpiration").datepicker({
+			autoclose : true,
+			format : 'yyyy-mm-dd'
+		});
+	</script>
+</body>
+</html>

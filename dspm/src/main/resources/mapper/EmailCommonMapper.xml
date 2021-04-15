@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cbs.dao.EmailCommonMapper">
+
+	<select id="selectAll"
+		resultType="com.cbs.entity.EmailCommonEntity">
+		select
+		storage.storege_name storegeName
+		,
+		stockpile.goods_name goodsName
+		, case
+		when 0 >=
+		datediff(stock.st_expiration, now())
+		then 0
+		else
+		datediff(stock.st_expiration, now())
+		end discardDays
+		from
+		tbl_stock stock
+		left join tbl_storage_master storage
+		on stock.storege_code =
+		storage.storege_code
+		and storage.del_flg = 0
+		left join
+		tbl_stockpile_master stockpile
+		on stock.category_code =
+		stockpile.category_code
+		and stock.goods_code = stockpile.goods_code
+		and
+		stockpile.del_flg = 0
+		left join tbl_user_master userinfo
+		on
+		stock.insert_user = userinfo.userID
+		and userinfo.del_flg = 0
+		left join
+		tbl_code_master code
+		on stock.st_unit = code.code_id
+		and code.id = 7
+		and
+		code.del_flg = 0
+		where
+		stock.del_flg = 0
+		and stock.stock_number > 0
+		and 30
+		>= datediff(stock.st_expiration, now())
+		order by
+		stock.st_expiration
+		desc
+	</select>
+
+	<select id="getStoregeName" resultType="String">
+		SELECT
+		storege_name
+		FROM
+		tbl_storage_master
+		WHERE
+		storege_code = #{storegeCode}
+		and del_flg = 0
+	</select>
+
+	<select id="getGoodsName" resultType="String">
+		SELECT
+		goods_name
+		FROM
+		tbl_stockpile_master
+		WHERE
+		category_code = #{categoryCode}
+		and goods_code
+		= #{goodsCode}
+		and del_flg = 0
+	</select>
+
+	<select id="getUnitName" resultType="String">
+		SELECT
+		code_name
+		FROM
+		tbl_code_master
+		WHERE
+		code_id = #{codeID}
+		and id=7
+		and del_flg = 0
+	</select>
+
+	<select id="getAllUserAuth" resultType="String">
+		SELECT
+		ifnull(email, 0)
+		FROM
+		tbl_user_master
+		where del_flg = 0
+	</select>
+
+	<select id="getUserAuth" resultType="String">
+		SELECT
+		ifnull(email, 0)
+		FROM
+		tbl_user_master
+		where
+		userAuth >= #{userAuth}
+		and del_flg = 0
+		union
+		select
+		ifnull(email, 0)
+		from
+		tbl_user_master
+		where
+		userID = #{loginID}
+	</select>
+</mapper>

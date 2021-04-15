@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cbs.dao.SI000V02Mapper">
+
+	<select id="search" resultType="com.cbs.form.SI000V02DetailInfo">
+		SELECT
+		  invertory.id id
+		  , storage.storege_name storegeName
+		  , stockpile.goods_name goodsName
+		  , userMaster.userName sheUser
+		  , invertory.star_invertory starInvertory
+		  , invertory.end_invertory endInvertory
+		  , invertory.invert_number invertNumber
+		  , code.code_name shedStatus
+		  , IFNULL(stock.stock_number, 0) stockNumber
+		  , IF (
+		    invertory.invert_number = stock.stock_number
+		    , "差無"
+		    , "差有"
+		  ) shedResult
+		FROM
+		  tbl_invertory invertory
+		  left join tbl_storage_master storage
+		    on invertory.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on invertory.category_code = stockpile.category_code
+		    and invertory.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_code_master code
+		    on invertory.status = code.code_id
+		    and code.id = 5
+		    and code.del_flg = 0
+		  left join tbl_stock stock
+		    on invertory.storege_code = stock.storege_code
+		    and invertory.category_code = stock.category_code
+		    and invertory.goods_code = stock.goods_code
+		    and invertory.st_unit = stock.st_unit
+		    and invertory.st_expiration = stock.st_expiration
+		    and invertory.st_price = stock.st_price
+		    and stock.del_flg = 0
+		  left join tbl_user_master userMaster
+		    on userMaster.userID = invertory.user_code
+		    and userMaster.del_flg = 0
+		where
+		invertory.del_flg = 0
+		<if test="storegeCode != null and storegeCode != ''">
+			and invertory.storege_code = #{storegeCode}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and invertory.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and invertory.goods_code = #{goodsCode}
+		</if>
+		<if test="starInvertory != null and endInvertory != null">
+			and
+			invertory.star_invertory >= #{starInvertory}
+			and
+			#{endInvertory} >= invertory.end_invertory
+		</if>
+		<if test="starInvertory == null and endInvertory != null">
+			and #{endInvertory} >= invertory.end_invertory
+		</if>
+		<if test="starInvertory != null and endInvertory == null">
+			and invertory.star_invertory >= #{starInvertory}
+		</if>
+		<if test="sheUser != null and sheUser != ''">
+			and invertory.user_code = #{sheUser}
+		</if>
+		<if test="shedStatus != null and shedStatus != ''">
+			and invertory.status = #{shedStatus}
+		</if>
+		<if test="shedResult != null and shedResult != ''">
+			and case when #{shedResult}=1014 then
+			invertory.invert_number = IFNULL(stock.stockNumber, 0)
+			when
+			#{shedResult}=1015 then invertory.invert_number !=
+			IFNULL(stock.stockNumber, 0)
+			when #{shedResult}='' then 1=1
+			end
+		</if>
+		order by invertory.end_invertory desc
+		limit #{offset},#{size};
+	</select>
+
+	<select id="searchAll"
+		resultType="com.cbs.form.SI000V02DetailInfo">
+		SELECT
+		  invertory.id id
+		  , storage.storege_name storegeName
+		  , stockpile.goods_name goodsName
+		  , userMaster.userName sheUser
+		  , invertory.star_invertory starInvertory
+		  , invertory.end_invertory endInvertory
+		  , invertory.invert_number invertNumber
+		  , code.code_name shedStatus
+		  , IFNULL(stock.stock_number, 0) stockNumber
+		  , IF (
+		    invertory.invert_number = stock.stock_number
+		    , "差無"
+		    , "差有"
+		  ) shedResult
+		FROM
+		  tbl_invertory invertory
+		  left join tbl_storage_master storage
+		    on invertory.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on invertory.category_code = stockpile.category_code
+		    and invertory.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_code_master code
+		    on invertory.status = code.code_id
+		    and code.id = 5
+		    and code.del_flg = 0
+		  left join tbl_stock stock
+		    on invertory.storege_code = stock.storege_code
+		    and invertory.category_code = stock.category_code
+		    and invertory.goods_code = stock.goods_code
+		    and invertory.st_unit = stock.st_unit
+		    and invertory.st_expiration = stock.st_expiration
+		    and invertory.st_price = stock.st_price
+		    and stock.del_flg = 0
+		  left join tbl_user_master userMaster
+		    on userMaster.userID = invertory.user_code
+		    and userMaster.del_flg = 0
+		where
+		invertory.del_flg = 0
+		<if test="storegeCode != null and storegeCode != ''">
+			and invertory.storege_code = #{storegeCode}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and invertory.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and invertory.goods_code = #{goodsCode}
+		</if>
+		<if test="starInvertory != null and endInvertory != null">
+			and
+			invertory.star_invertory >= #{starInvertory}
+			and
+			#{endInvertory} >= invertory.end_invertory
+		</if>
+		<if test="starInvertory == null and endInvertory != null">
+			and #{endInvertory} >= invertory.end_invertory
+		</if>
+		<if test="starInvertory != null and endInvertory == null">
+			and invertory.star_invertory >= #{starInvertory}
+		</if>
+		<if test="sheUser != null and sheUser != ''">
+			and invertory.user_code = #{sheUser}
+		</if>
+		<if test="shedStatus != null and shedStatus != ''">
+			and invertory.status = #{shedStatus}
+		</if>
+		<if test="shedResult != null and shedResult != ''">
+			and case when #{shedResult}=1014 then
+			invertory.invert_number = IFNULL(stock.stockNumber, 0)
+			when
+			#{shedResult}=1015 then invertory.invert_number !=
+			IFNULL(stock.stockNumber, 0)
+			when #{shedResult}='' then 1=1
+			end
+		</if>
+		order by invertory.end_invertory desc
+	</select>
+
+	<select id="select" resultType="com.cbs.entity.InvertoryEntity">
+		select
+		  storege_code storegeCode
+		  , category_code categoryCode
+		  , goods_code goodsCode
+		  , user_code userCode
+		  , star_invertory starInvertory
+		  , end_invertory endInvertory
+		  , invert_number invertNumber
+		  , status
+		  , comment
+		from
+		  tbl_invertory
+		where
+		  id = #{id}
+		  and del_flg = 0
+	</select>
+
+	<update id="delete">
+		update tbl_invertory
+		set
+		  del_flg = 1
+		where
+		  id = #{id}
+	</update>
+
+</mapper>

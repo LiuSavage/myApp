@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>防災備品管理</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{js/bootstrap-datepicker/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{/css/icons.css}" />
+<link rel="stylesheet" th:href="@{/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{/css/app-style.css}" />
+<link rel="stylesheet" th:href="@{/css/sidebar-menu.css}" />
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+	<div id="wrapper">
+		<div th:include="common/wrapper :: wrapper"></div>
+		<div th:include="common/header :: header"></div>
+		<div class="clearfix"></div>
+		<div class="content-wrapper" id="content">
+			<div class="container-fluid">
+				<div class="row pt-2 pb-2">
+					<div class="col-sm-9">
+						<h4 class="page-title">入庫一覧</h4>
+					</div>
+					<div class="col-sm-3">
+						<div class="btn-group float-sm-right">
+							<div class="dropdown-menu"></div>
+						</div>
+					</div>
+				</div>
+				<form method="post" role="form" id="myForm" class="login_padding"
+					th:action="@{/searchPS}" th:object="${ps000V02Form}">
+					<div th:include="common/message :: message"></div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-body searchStyleSet">
+									<div class="row">
+										<label for="input-10" class="col-sm-2 col-form-label">倉庫名</label>
+										<div class="col-sm-3">
+											<select id="storegeCode" name="storegeCode"
+												class="form-control">
+												<option th:each="storege : ${ps000V02Form.storegeList}"
+													th:object="${storege}" th:text="${storege.value}"
+													th:value="${storege.key}"
+													th:selected="${storege.key == ps000V02Form.storegeCode}">
+												</option>
+											</select>
+										</div>
+										<div class="col-sm-2"></div>
+										<label for="input-10" class="col-sm-2 col-form-label">ステータス</label>
+										<div class="col-sm-3">
+											<select id="stStatus" name="stStatus" class="form-control">
+												<option th:each="code : ${ps000V02Form.codeList}"
+													th:object="${stStatus}" th:text="${code.value}"
+													th:value="${code.key}"
+													th:selected="${code.key == ps000V02Form.stStatus}">
+												</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="input-11" class="col-sm-2 col-form-label">カテゴリー</label>
+										<div class="col-sm-3">
+											<select id="categoryCode" name="categoryCode"
+												class="form-control" onChange="getGoods()">
+												<option
+													th:each="category : ${ps000V02Form.categoryCodeList}"
+													th:object="${category}" th:text="${category.value}"
+													th:value="${category.key}"
+													th:selected="${category.key == ps000V02Form.categoryCode}">
+												</option>
+											</select>
+										</div>
+										<div class="col-sm-2"></div>
+										<label for="input-11" class="col-sm-2 col-form-label">備品名</label>
+										<div class="col-sm-3">
+											<select id="goodsCode" name="goodsCode" class="form-control">
+												<option th:each="goods : ${ps000V02Form.goodsList}"
+													th:object="${goods}" th:text="${goods.value}"
+													th:value="${goods.key}"
+													th:selected="${goods.key == ps000V02Form.goodsCode}">
+												</option>
+											</select>
+										</div>
+									</div>
+
+									<div class=" row">
+										<label for="input-12" class="col-sm-2 col-form-label">入庫日From</label>
+										<div class="col-sm-3">
+											<input type="text" id="storingDateFrom"
+												name="storingDateFrom" th:value="*{storingDateFrom}"
+												placeholder="年-月-日" class="form-control checkDate" />
+										</div>
+										<div class="col-sm-2" style="text-align: center;">~</div>
+										<label for="input-13" class="col-sm-2 col-form-label">入庫日To</label>
+										<div class="col-sm-3">
+											<input type="text" id="storingDateEnd" name="storingDateEnd"
+												th:value="*{storingDateEnd}" placeholder="年-月-日"
+												class="form-control checkDate" />
+										</div>
+									</div>
+
+									<div class="row">
+										<label for="input-10" class="col-sm-2 col-form-label">担当者</label>
+										<div class="col-sm-3">
+											<select id="userCode" name="userCode" class="form-control">
+												<option th:each="user : ${ps000V02Form.userCodeList}"
+													th:object="${user}" th:text="${user.value}"
+													th:value="${user.key}"
+													th:selected="${user.key == ps000V02Form.userCode}">
+												</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="text-center">
+										<button type="submit" class="btn btn-success">検索</button>
+										<button id="clear" type="button" class="btn btn-success"
+											onclick="clearStoring()">クリア</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-header border-0">
+									合計件数：&nbsp;<span th:text="${ps000V02Form.sumCount}"></span>件
+								</div>
+								<div>
+									<div class="table-responsive table-select">
+										<table
+											class="table table-bordered table-striped text-center mb-3">
+											<thead>
+												<tr class="info">
+													<th class="text-center">NO</th>
+													<th class="text-center">倉庫名</th>
+													<th class="text-center">カテゴリー</th>
+													<th class="text-center">備品名</th>
+													<th class="text-center">入庫者</th>
+													<th class="text-center">入庫日</th>
+													<th class="text-center">入庫数</th>
+													<th class="text-center">入庫単位</th>
+													<th class="text-center">入庫理由</th>
+													<th class="text-center">入庫ステータス</th>
+													<th class="text-center">操作</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr th:each="item,loop : ${ps000V02Form.storingList}">
+													<td
+														th:text="${loop.count}+(${ps000V02Form.pageSize}*(${ps000V02Form.pageNo}-1))"></td>
+													<td th:text="${item.storegeName}"></td>
+													<td th:text="${item.categoryName}"></td>
+													<td th:text="${item.goodsName}"></td>
+													<td th:text="${item.userName}"></td>
+													<td th:text="${item.stReceipt}"></td>
+													<td th:text="${item.stQuantity}"></td>
+													<td th:text="${item.stUnitName}"></td>
+													<td th:text="${item.stReason}"></td>
+													<td th:text="${item.stStatus}"></td>
+													<td><a th:href="@{/initPS(kbn=1,id=${item.id})}"
+														class="btn btn-primary btn-sm">参照</a> <a
+														th:classappend="${item.stStatus} == '入庫完了' or ${item.stReason} == '倉庫移動' ? 'disabled'"
+														th:href="@{/initPS(kbn=2,id=${item.id})}"
+														class="btn btn-primary btn-sm">更新</a> <a
+														style="color: #fff; cursor: pointer;"
+														th:classappend="${item.stReason} == '倉庫移動' ? 'disabled'"
+														th:onclick="'del(\''+${item.id}+'\');'"
+														class="btn btn-primary btn-sm">消除</a></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<ul class="pagination" style="float: left;">
+										<li><a th:href="@{/storingCsvDown}"
+											class="btn btn-primary" style="color: balck">一覧ダウンロード</a></li>
+									</ul>
+									<ul class="pagination" style="float: right;"
+										th:if="${ps000V02Form.storingList} != null and ${ps000V02Form.storingList.size()} > 0">
+										<li class="disabled page-link"
+											th:styleappend="${ps000V02Form.pageNo == 1}?'pointer-events: none; background-color: rgba(0,0,0,.05);':'cursor:pointer;'"
+											th:onclick="'getPageData(\''+${ps000V02Form.pageNo-1}+'\');'"><a
+											aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+										</li>
+
+										<li class="page-link"
+											th:styleappend="${ps000V02Form.pageNo == i}?'font-weight:bold;background-color:#3b5998;color:#fff;'"
+											th:each="i:${#numbers.sequence(ps000V02Form.startPage,ps000V02Form.endPage)}"><a
+											th:text="${i}" th:onclick="'getPageData(\''+${i}+'\');'"></a></li>
+
+										<li class="page-link"
+											th:styleappend="${ps000V02Form.pageNo == ps000V02Form.sumPage}?'pointer-events: none; background-color: rgba(0,0,0,.05);'"
+											th:onclick="'getPageData(\''+${ps000V02Form.pageNo+1}+'\');'"><a
+											aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+									</ul>
+									<input type="hidden" id="pageNo" name="pageNo"
+										th:value="${ps000V02Form.pageNo}" /> <input type="hidden"
+										id="startPage" name="startPage"
+										th:value="${ps000V02Form.startPage}" /> <input type="hidden"
+										id="endPage" name="endPage" th:value="${ps000V02Form.endPage}" />
+									<input type="hidden" id="sumPage" name="sumPage"
+										th:value="${ps000V02Form.sumPage}" /><input type="hidden"
+										id="id" name="id" th:value="${ps000V02Form.id}" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div th:include="common/footer :: footer"></div>
+	</div>
+
+	<script>
+		function getGoods() {
+			getGoodsList("/getStoringGoods", "myForm");
+		}
+
+		function clearStoring() {
+			$("#storegeCode").val("");
+			$("#stStatus").val("");
+			$("#categoryCode").val("");
+			$("#goodsCode").val("");
+			$("#storingDateFrom").val("");
+			$("#storingDateEnd").val("");
+			$("#userCode").val("");
+		}
+
+		function getPageData(pageNo) {
+			$('#pageNo').val(pageNo);
+			ajax("POST", "/storingPage", "myForm");
+		}
+
+		function del(id) {
+			Ewin.confirm({
+				message : "削除してよろしいですか？"
+			}).on(function(e) {
+				if (!e) {
+					return;
+				}
+				$('#id').val(id);
+				ajax("POST", "/deletePS", "myForm");
+			});
+		}
+	</script>
+
+	<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/const.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/sidebar-menu.js}"></script>
+	<script type="text/javascript" th:src="@{js/app-script.js}"></script>
+	<script type="text/javascript" th:src="@{js/select2.min.js}"></script>
+
+	<script>
+		$("#storingDateFrom").datepicker({
+			autoclose : true,
+			format : 'yyyy-mm-dd'
+		});
+		$("#storingDateEnd").datepicker({
+			autoclose : true,
+			format : 'yyyy-mm-dd'
+		});
+	</script>
+</body>
+</html>

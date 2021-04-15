@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>防災備品管理</title>
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	th:href="@{js/bootstrap-datepicker/css/bootstrap-datepicker.min.css}" />
+<link rel="stylesheet" th:href="@{/css/icons.css}" />
+<link rel="stylesheet" th:href="@{/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{/css/app-style.css}" />
+<link rel="stylesheet" th:href="@{/css/sidebar-menu.css}" />
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+	<div id="wrapper">
+		<div th:include="common/wrapper :: wrapper"></div>
+		<div th:include="common/header :: header"></div>
+		<div class="clearfix"></div>
+		<div class="content-wrapper" id="content">
+			<div class="container-fluid">
+				<div class="row pt-2 pb-2">
+					<div class="col-sm-9">
+						<h4 class="page-title">マスタ管理</h4>
+					</div>
+					<div class="col-sm-3">
+						<div class="btn-group float-sm-right">
+							<div class="dropdown-menu"></div>
+						</div>
+					</div>
+				</div>
+
+				<form method="post" role="form" id="myForm" class="login_padding"
+					th:action="@{/regterSM}" th:object="${sm000V01Form}"
+					enctype="multipart/form-data">
+					<div th:include="common/message :: message"></div>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-3 col-form-label">登録選択</label>
+										<div class="col-sm-6">
+											<select class="form-control" id="select" name="select"
+												th:errorclass="is-invalid">
+												<option th:each="select : ${sm000V01Form.selectList}"
+													th:object="${select}" th:text="${select.value}"
+													th:value="${select.key}"
+													th:selected="${select.key == sm000V01Form.select}">
+												</option>
+											</select>
+											<div class="help-bolck" style="color: red;"
+												th:if="*{#fields.hasErrors('select')}" th:errors="*{select}"></div>
+										</div>
+									</div>
+
+									<div class="form-group row">
+										<label for="basic-select" class="col-sm-3 col-form-label">アップロードファイル</label>
+										<div class="col-sm-9">
+											<input type="file" id="file" name="file" class="file"
+												th:value="*{file}" />
+										</div>
+									</div>
+
+									<div class="form-group row"
+										th:if="!${#lists.isEmpty(sm000V01Form.successList)}">
+										<label for="basic-select" class="col-sm-3 col-form-label">成功データ</label>
+										<div class="col-sm-9" style="">
+											成功件数：<span th:text="${#lists.size(sm000V01Form.successList)}"></span>
+										</div>
+										<label for="basic-select" class="col-sm-3 col-form-label"></label>
+										<div class="col-sm-6"
+											style="height: 200px; overflow-y: auto; border: 1px solid black;">
+											<table class="table table-bordered table-striped text-center">
+												<thead>
+													<tr class="info">
+														<th class="text-center">NO</th>
+														<th class="text-center">コード</th>
+														<th class="text-center">名称</th>
+														<th class="text-center">結果</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="detail,loop : ${sm000V01Form.successList}">
+														<td th:text="${loop.count}"></td>
+														<td th:text="${detail.code}"></td>
+														<td th:text="${detail.name}"></td>
+														<td th:text="${detail.message}"></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+
+									<div class="form-group row"
+										th:if="!${#lists.isEmpty(sm000V01Form.failList)}">
+										<label for="basic-select" class="col-sm-3 col-form-label">失敗データ</label>
+										<div class="col-sm-9" style="">
+											失敗件数：<span th:text="${#lists.size(sm000V01Form.failList)}"></span>
+										</div>
+										<label for="basic-select" class="col-sm-3 col-form-label"></label>
+										<div class="col-sm-6"
+											style="height: 200px; overflow-y: auto; border: 1px solid black;">
+											<table class="table table-bordered table-striped text-center">
+												<thead>
+													<tr class="info">
+														<th class="text-center">NO</th>
+														<th class="text-center">コード</th>
+														<th class="text-center">名称</th>
+														<th class="text-center">結果</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="detail,loop : ${sm000V01Form.failList}">
+														<td th:text="${loop.count}"></td>
+														<td th:text="${detail.code}"></td>
+														<td th:text="${detail.name}"></td>
+														<td th:text="${detail.message}"></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+
+									<div class="form-footer text-center">
+										<button class="btn btn-success">
+											<i class="fa fa-check-square-o"></i> 登録
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div th:include="common/footer :: footer"></div>
+	</div>
+
+	<script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/const.js}"></script>
+	<script type="text/javascript"
+		th:src="@{js/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{js/sidebar-menu.js}"></script>
+	<script type="text/javascript" th:src="@{js/app-script.js}"></script>
+	<script type="text/javascript" th:src="@{js/select2.min.js}"></script>
+</body>
+</html>

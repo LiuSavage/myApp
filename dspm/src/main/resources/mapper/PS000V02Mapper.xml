@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cbs.dao.PS000V02Mapper">
+
+	<select id="search" resultType="com.cbs.form.PS000V02DetailInfo">
+		select
+		  storing.id id
+		  , storage.storege_name storegeName
+		  , stockpile.category_name categoryName
+		  , stockpile.goods_name goodsName
+		  , userinfo.userName userName
+		  , storing.st_receipt stReceipt
+		  , storing.st_quantity stQuantity
+		  , code1.code_name stUnitName
+		  , code2.code_name stReason
+		  , code3.code_name stStatus
+		from
+		  tbl_storing storing
+		  left join tbl_storage_master storage
+		    on storing.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on storing.category_code = stockpile.category_code
+		    and storing.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_user_master userinfo
+		    on storing.user_code = userinfo.userID
+		    and userinfo.del_flg = 0
+		  left join tbl_code_master code1
+		    on storing.st_unit = code1.code_id
+		    and code1.id = 7
+		    and code1.del_flg = 0
+		  left join tbl_code_master code2
+		    on storing.st_reason = code2.code_id
+		    and code2.id = 1
+		    and code2.del_flg = 0
+		  left join tbl_code_master code3
+		    on storing.st_status = code3.code_id
+		    and code3.id = 3
+		    and code3.del_flg = 0
+		where
+		  storing.del_flg = 0
+		<if test="storegeCode != null and storegeCode != ''">
+			and storing.storege_code = #{storegeCode}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and storing.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and storing.goods_code = #{goodsCode}
+		</if>
+		<if test="userCode != null and userCode != ''">
+			and storing.user_code = #{userCode}
+		</if>
+		<if test="stStatus != null and stStatus != ''">
+			and storing.st_status = #{stStatus}
+		</if>
+		<if test="storingDateFrom != null">
+			and storing.st_receipt >= #{storingDateFrom}
+		</if>
+		<if test="storingDateEnd != null">
+			and #{storingDateEnd} >= storing.st_receipt
+		</if>
+		order by storing.st_receipt desc
+		limit #{offset},#{size};
+	</select>
+
+	<select id="selectAll" resultType="com.cbs.form.PS000V02DetailInfo">
+		select
+		  storing.id id
+		  , storage.storege_name storegeName
+		  , stockpile.category_name categoryName
+		  , stockpile.goods_name goodsName
+		  , userinfo.userName userName
+		  , storing.st_receipt stReceipt
+		  , storing.st_quantity stQuantity
+		  , code1.code_name stUnitName
+		  , code2.code_name stReason
+		  , code3.code_name stStatus
+		from
+		  tbl_storing storing
+		  left join tbl_storage_master storage
+		    on storing.storege_code = storage.storege_code
+		    and storage.del_flg = 0
+		  left join tbl_stockpile_master stockpile
+		    on storing.category_code = stockpile.category_code
+		    and storing.goods_code = stockpile.goods_code
+		    and stockpile.del_flg = 0
+		  left join tbl_user_master userinfo
+		    on storing.user_code = userinfo.userID
+		    and userinfo.del_flg = 0
+		  left join tbl_code_master code1
+		    on storing.st_unit = code1.code_id
+		    and code1.id = 7
+		    and code1.del_flg = 0
+		  left join tbl_code_master code2
+		    on storing.st_reason = code2.code_id
+		    and code2.id = 1
+		    and code2.del_flg = 0
+		  left join tbl_code_master code3
+		    on storing.st_status = code3.code_id
+		    and code3.id = 3
+		    and code3.del_flg = 0
+		where
+		  storing.del_flg = 0
+		<if test="storegeCode != null and storegeCode != ''">
+			and storing.storege_code = #{storegeCode}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and storing.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and storing.goods_code = #{goodsCode}
+		</if>
+		<if test="userCode != null and userCode != ''">
+			and storing.user_code = #{userCode}
+		</if>
+		<if test="stStatus != null and stStatus != ''">
+			and storing.st_status = #{stStatus}
+		</if>
+		<if test="storingDateFrom != null">
+			and storing.st_receipt >= #{storingDateFrom}
+		</if>
+		<if test="storingDateEnd != null">
+			and #{storingDateEnd} >= storing.st_receipt
+		</if>
+		order by storing.st_receipt desc
+	</select>
+
+	<select id="select" resultType="com.cbs.entity.StoringEntity">
+		select
+		  storege_code storegeCode
+		  , category_code categoryCode
+		  , goods_code goodsCode
+		  , user_code userCode
+		  , st_scheduled stScheduled
+		  , st_receipt stReceipt
+		  , st_expiration stExpiration
+		  , serial_number serialNumber
+		  , st_price stPrice
+		  , st_quantity stQuantity
+		  , st_unit stUnit
+		  , st_amount stAmount
+		  , st_reason stReason
+		  , st_status stStatus
+		  , st_comment stComment
+		  , photo
+		FROM
+		  tbl_storing
+		WHERE
+		  id = #{id}
+	</select>
+
+	<update id="deleteStoring">
+		update tbl_storing
+		set del_flg=1
+		where id=#{id}
+	</update>
+
+</mapper>

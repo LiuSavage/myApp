@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<body>
+	<div id="footer" th:fragment="message">
+		<div class="row" th:if="${#fields.hasErrors()}">
+			<div class="col-lg-12">
+				<div
+					style="box-shadow: none; border: red; background-color: #fffcfc; border: 2px solid #f30000;">
+					<div style="padding: 1rem;">
+						<ul>
+							<span>エラーが発生しました。</span>
+							<li th:each="msg:${#fields.globalErrors()}" th:text="${msg}"></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

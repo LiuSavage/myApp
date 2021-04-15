@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cbs.dao.WM000V02Mapper">
+	
+	<select id="search" resultType="com.cbs.form.WM000V02Info">
+		select 
+			t1.id stockingId,
+			t2.id storingId,
+			t1.storege_code stockingStoregeCode,
+			t4.storege_name stockingStoregeName,
+			t2.storege_code storingStoregeCode,
+			t2.storege_name storingStoregeName,
+			t1.category_code categoryCode,
+			t3.category_name categoryName,
+			t1.goods_code goodsCode,
+			t3.goods_name goodsName,
+			t1.user_code userCode,
+			t5.userName userName,
+			t1.stocking_receipt stockingReceipt,
+			t1.stocking_quantity stockingQuantity,
+			t1.stocking_status stockingStatus,
+			t1.st_comment stComment
+		from tbl_stocking t1
+		inner join
+			(select tbl_storing.id id,
+					tbl_storing.storege_code storege_code,
+					tbl_storing.category_code category_code,
+					tbl_storing.goods_code goods_code,
+					tbl_storing.user_code user_code,
+					tbl_storing.st_receipt st_receipt,
+					tbl_storing.st_expiration st_expiration,
+					tbl_storing.serial_number serial_number,
+					tbl_storage_master.storege_name storege_name,
+					tbl_storing.st_quantity st_quantity
+			from tbl_storing 
+			left join tbl_storage_master
+					on tbl_storing.storege_code = tbl_storage_master.storege_code
+					and tbl_storage_master.del_flg = 0
+			) t2
+			on t1.storing_id = t2.id
+		left join tbl_stockpile_master t3
+			on t1.category_code = t3.category_code
+			and t1.goods_code = t3.goods_code
+			and t3.del_flg = 0
+		left join tbl_storage_master t4
+			on t1.storege_code = t4.storege_code
+			and t4.del_flg = 0
+		left join tbl_user_master t5
+			on t1.user_code = t5.userID
+			and t5.del_flg = 0
+		where t1.stocking_reason = '1002'
+		<if test="storegeCode != null and storegeCode != ''">
+			and t1.storege_code = #{storegeCode}
+		</if>
+		<if test="storegeCode2 != null and storegeCode2 != ''">
+			and t2.storege_code = #{storegeCode2}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and t1.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and t1.goods_code = #{goodsCode}
+		</if>
+		<if test="sheUser != null and sheUser != ''">
+			and t1.user_code = #{sheUser}
+		</if>
+		<if test="status != null and status != ''">
+			and t1.stocking_status = #{status}
+		</if>
+		<if test="movingDayFrom != null and movingDayTo != null">
+			and t1.stocking_receipt >= #{movingDayFrom}
+			and #{movingDayTo} >= t1.stocking_receipt
+		</if>
+		<if test="movingDayFrom != null and movingDayTo == null">
+			and t1.stocking_receipt >= #{movingDayFrom}
+		</if>
+		<if test="movingDayFrom == null and movingDayTo != null">
+			and #{movingDayTo} >= t1.stocking_receipt
+		</if>
+		and t1.del_flg = 0
+		order by t1.stocking_receipt desc
+		limit #{offset},#{size};
+	</select>
+	
+	<select id="searchAll" resultType="com.cbs.form.WM000V02Info">
+		select 
+			t1.id stockingId,
+			t2.id storingId,
+			t1.storege_code stockingStoregeCode,
+			t4.storege_name stockingStoregeName,
+			t2.storege_code storingStoregeCode,
+			t2.storege_name storingStoregeName,
+			t1.category_code categoryCode,
+			t3.category_name categoryName,
+			t1.goods_code goodsCode,
+			t3.goods_name goodsName,
+			t1.user_code userCode,
+			t5.userName userName,
+			t1.stocking_receipt stockingReceipt,
+			t1.stocking_quantity stockingQuantity,
+			t1.stocking_status stockingStatus,
+			case
+				when t1.stocking_status = '1011'
+				then '移動完了'
+			else
+				'移動中'
+			end stockingStatusName,
+			t1.st_comment stComment
+		from tbl_stocking t1
+		inner join
+			(select tbl_storing.id id,
+					tbl_storing.storege_code storege_code,
+					tbl_storing.category_code category_code,
+					tbl_storing.goods_code goods_code,
+					tbl_storing.user_code user_code,
+					tbl_storing.st_receipt st_receipt,
+					tbl_storing.st_expiration st_expiration,
+					tbl_storing.serial_number serial_number,
+					tbl_storage_master.storege_name storege_name,
+					tbl_storing.st_quantity st_quantity
+			from tbl_storing 
+			left join tbl_storage_master
+					on tbl_storing.storege_code = tbl_storage_master.storege_code
+					and tbl_storage_master.del_flg = 0
+			) t2
+			on t1.storing_id = t2.id
+		left join tbl_stockpile_master t3
+			on t1.category_code = t3.category_code
+			and t1.goods_code = t3.goods_code
+			and t3.del_flg = 0
+		left join tbl_storage_master t4
+			on t1.storege_code = t4.storege_code
+			and t4.del_flg = 0
+		left join tbl_user_master t5
+			on t1.user_code = t5.userID
+			and t5.del_flg = 0
+		where t1.stocking_reason = '1002'
+		<if test="storegeCode != null and storegeCode != ''">
+			and t1.storege_code = #{storegeCode}
+		</if>
+		<if test="storegeCode2 != null and storegeCode2 != ''">
+			and t2.storege_code = #{storegeCode2}
+		</if>
+		<if test="categoryCode != null and categoryCode != ''">
+			and t1.category_code = #{categoryCode}
+		</if>
+		<if test="goodsCode != null and goodsCode != ''">
+			and t1.goods_code = #{goodsCode}
+		</if>
+		<if test="sheUser != null and sheUser != ''">
+			and t1.user_code = #{sheUser}
+		</if>
+		<if test="status != null and status != ''">
+			and t1.stocking_status = #{status}
+		</if>
+		<if test="movingDayFrom != null and movingDayTo != null">
+			and t1.stocking_receipt >= #{movingDayFrom}
+			and #{movingDayTo} >= t1.stocking_receipt
+		</if>
+		<if test="movingDayFrom != null and movingDayTo == null">
+			and t1.stocking_receipt >= #{movingDayFrom}
+		</if>
+		<if test="movingDayFrom == null and movingDayTo != null">
+			and #{movingDayTo} >= t1.stocking_receipt
+		</if>
+		and t1.del_flg = 0
+		order by t1.stocking_receipt desc;
+	</select>
+	
+	<select id="selectInfo" resultType="com.cbs.form.WM000V02Info">
+		select 
+			t1.id stockingId,
+			t2.id storingId,
+			t1.storege_code stockingStoregeCode,
+			t4.storege_name stockingStoregeName,
+			t2.storege_code storingStoregeCode,
+			t2.storege_name storingStoregeName,
+			t1.category_code categoryCode,
+			t3.category_name categoryName,
+			t1.goods_code goodsCode,
+			t3.goods_name goodsName,
+			t1.user_code userCode,
+			t5.userName userName,
+			t1.stocking_receipt stockingReceipt,
+			t1.stocking_quantity stockingQuantity,
+			t1.stocking_status stockingStatus,
+			t1.st_comment stComment
+		from tbl_stocking t1
+		left join
+			(select tbl_storing.id id,
+					tbl_storing.storege_code storege_code,
+					tbl_storing.category_code category_code,
+					tbl_storing.goods_code goods_code,
+					tbl_storing.user_code user_code,
+					tbl_storing.st_receipt st_receipt,
+					tbl_storing.st_expiration st_expiration,
+					tbl_storing.serial_number serial_number,
+					tbl_storage_master.storege_name storege_name,
+					tbl_storing.st_quantity st_quantity
+			from tbl_storing 
+			left join tbl_storage_master
+					on tbl_storing.storege_code = tbl_storage_master.storege_code
+			) t2
+			on t1.storing_id = t2.id
+		left join tbl_stockpile_master t3
+			on t1.category_code = t3.category_code
+			and t1.goods_code = t3.goods_code
+			and t3.del_flg = 0
+		left join tbl_storage_master t4
+			on t1.storege_code = t4.storege_code
+			and t4.del_flg = 0
+		left join tbl_user_master t5
+			on t1.user_code = t5.userID
+			and t5.del_flg = 0
+		where t1.id = #{stockingId};
+	</select>
+	
+	<update id="stockingDelete">
+		update tbl_stocking
+		set del_flg=1
+		where id=#{stockingId}
+	</update>
+	
+	<update id="storingDelete">
+		update tbl_storing
+		set del_flg=1
+		where id=#{storingId}
+	</update>
+
+</mapper>

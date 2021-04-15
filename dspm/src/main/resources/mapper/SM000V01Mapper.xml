@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cbs.dao.SM000V01Mapper">
+
+	<insert id="insertStorege">
+		INSERT
+		INTO tbl_storage_master(
+		storege_code
+		, storege_name
+		, st_type
+		, areaID
+		, set_address
+		, user_code
+		, user_name
+		, del_flg
+		, insert_date
+		, insert_user
+		, update_date
+		, update_user
+		)
+		VALUES (
+		#{storegeCode}
+		, #{storegeName}
+		, #{stType}
+		, #{areaID}
+		, #{setAddress}
+		, #{userCode}
+		, #{userName}
+		, #{delFlg}
+		, #{insertDate}
+		, #{insertUser}
+		, #{updateDate}
+		, #{updateUser}
+		)
+	</insert>
+
+	<select id="selectStorege" resultType="java.lang.String">
+		select
+		storege_code storegeCode
+		from
+		tbl_storage_master
+		where
+		storege_code = #{storegeCode}
+		and del_flg = 0
+	</select>
+
+	<update id="deleteStorege">
+		update tbl_storage_master
+		set
+		del_flg = 1
+		where
+		storege_code = #{storegeCode}
+		and del_flg = 0
+	</update>
+
+	<insert id="insertStockpile">
+		INSERT
+		INTO tbl_stockpile_master(
+		category_code
+		, category_name
+		, goods_code
+		, goods_name
+		, amount
+		, del_flg
+		, insert_date
+		, insert_user
+		, update_date
+		, update_user
+		)
+		VALUES (
+		#{categoryCode}
+		, #{categoryName}
+		, #{goodsCode}
+		, #{goodsName}
+		, #{amount}
+		, #{delFlg}
+		, #{insertDate}
+		, #{insertUser}
+		, #{updateDate}
+		, #{updateUser}
+		)
+	</insert>
+
+	<select id="selectStockpile" resultType="java.lang.String">
+		select
+		category_code categoryCode
+		from
+		tbl_stockpile_master
+		where
+		category_code = #{categoryCode}
+		and goods_code = #{goodsCode}
+		and del_flg = 0
+	</select>
+
+	<update id="deleteStockpile">
+		update tbl_stockpile_master
+		set
+		del_flg = 1
+		where
+		category_code = #{categoryCode}
+		and goods_code = #{goodsCode}
+		and del_flg = 0
+	</update>
+
+	<update id="updateStock">
+		update tbl_stock
+		set
+		  del_flg = 1
+		where
+		  id in (
+		    select
+		      temp.id id
+		    from
+		      (
+		        select
+		          stock.id id
+		        from
+		          tbl_stock stock
+		        where
+		          not exists (
+		            select
+		              storage.storege_code
+		            from
+		              tbl_storage_master storage
+		            where
+		              stock.storege_code = storage.storege_code
+		              and storage.del_flg = 0
+		          )
+		        union
+		        select
+		          stock.id id
+		        from
+		          tbl_stock stock
+		        where
+		          not exists (
+		            select
+		              stockpile.id
+		            from
+		              tbl_stockpile_master stockpile
+		            where
+		              stock.category_code = stockpile.category_code
+		              and stock.goods_code = stockpile.goods_code
+		              and stockpile.del_flg = 0
+		          )
+		      ) temp
+		  )
+	</update>
+
+	<update id="updateStoring">
+		update tbl_storing
+		set
+		  del_flg = 1
+		where
+		  id in (
+		    select
+		      temp.id id
+		    from
+		      (
+		        select
+		          storing.id id
+		        from
+		          tbl_storing storing
+		        where
+		          not exists (
+		            select
+		              storage.storege_code
+		            from
+		              tbl_storage_master storage
+		            where
+		              storing.storege_code = storage.storege_code
+		              and storage.del_flg = 0
+		          )
+		        union
+		        select
+		          storing.id id
+		        from
+		          tbl_storing storing
+		        where
+		          not exists (
+		            select
+		              stockpile.id
+		            from
+		              tbl_stockpile_master stockpile
+		            where
+		              storing.category_code = stockpile.category_code
+		              and storing.goods_code = stockpile.goods_code
+		              and stockpile.del_flg = 0
+		          )
+		      ) temp
+		  )
+	</update>
+
+	<update id="updateStocking">
+		update tbl_stocking
+		set
+		  del_flg = 1
+		where
+		  id in (
+		    select
+		      temp.id id
+		    from
+		      (
+		        select
+		          stocking.id id
+		        from
+		          tbl_stocking stocking
+		        where
+		          not exists (
+		            select
+		              storage.storege_code
+		            from
+		              tbl_storage_master storage
+		            where
+		              stocking.storege_code = storage.storege_code
+		              and storage.del_flg = 0
+		          )
+		        union
+		        select
+		          stocking.id id
+		        from
+		          tbl_stocking stocking
+		        where
+		          not exists (
+		            select
+		              stockpile.id
+		            from
+		              tbl_stockpile_master stockpile
+		            where
+		              stocking.category_code = stockpile.category_code
+		              and stocking.goods_code = stockpile.goods_code
+		              and stockpile.del_flg = 0
+		          )
+		      ) temp
+		  )
+	</update>
+
+	<update id="updateInvertory">
+		update tbl_invertory
+		set
+		  del_flg = 1
+		where
+		  id in (
+		    select
+		      temp.id id
+		    from
+		      (
+		        select
+		          invertory.id id
+		        from
+		          tbl_invertory invertory
+		        where
+		          not exists (
+		            select
+		              storage.storege_code
+		            from
+		              tbl_storage_master storage
+		            where
+		              invertory.storege_code = storage.storege_code
+		              and storage.del_flg = 0
+		          )
+		        union
+		        select
+		          invertory.id id
+		        from
+		          tbl_invertory invertory
+		        where
+		          not exists (
+		            select
+		              stockpile.id
+		            from
+		              tbl_stockpile_master stockpile
+		            where
+		              invertory.category_code = stockpile.category_code
+		              and invertory.goods_code = stockpile.goods_code
+		              and stockpile.del_flg = 0
+		          )
+		      ) temp
+		  )
+	</update>
+
+</mapper>
